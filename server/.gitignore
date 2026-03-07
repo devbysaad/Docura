@@ -1,0 +1,8 @@
+// include all the node_modules folders and envs below (even the nested ones)
+
+node_modules/
+.env*
+.env/
+dist/
+server/dist/
+client/dist/
