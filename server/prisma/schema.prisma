@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  plan      String   @default("free") // "free" | "pro"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resumes   Resume[]
+  aiHistory AiHistory[]
+  usage     Usage?
+}
+
+model Resume {
+  id         String   @id @default(uuid())
+  userId     String
+  title      String   @default("Untitled Resume")
+  data       Json     // full resume data object
+  templateId String   @default("modern-minimal")
+  isDraft    Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AiHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String   // "generate" | "chat" | "review" | "template"
+  prompt    String
+  response  String   @db.Text
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Usage {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  aiGenerations Int      @default(0)
+  downloads     Int      @default(0)
+  resetAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

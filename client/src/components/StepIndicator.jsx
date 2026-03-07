@@ -1,9 +1,11 @@
-const STEPS = ["Basic Info", "Skills", "Experience", "Projects"];
+const STEPS = ["Basic Info", "Skills", "Experience", "Projects", "Education"];
 
-export default function StepIndicator({ currentStep }) {
+export default function StepIndicator({ currentStep, totalSteps }) {
+    const steps = STEPS.slice(0, totalSteps || STEPS.length);
+
     return (
         <div className="flex items-center justify-center gap-1 sm:gap-2 mb-8">
-            {STEPS.map((label, i) => {
+            {steps.map((label, i) => {
                 const step = i + 1;
                 const isActive = step === currentStep;
                 const isCompleted = step < currentStep;
@@ -13,10 +15,10 @@ export default function StepIndicator({ currentStep }) {
                         <div className="flex flex-col items-center gap-1">
                             <div
                                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${isCompleted
-                                        ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30"
-                                        : isActive
-                                            ? "bg-gradient-to-br from-purple-600 to-blue-500 text-white shadow-lg shadow-blue-500/30 ring-2 ring-purple-400/40"
-                                            : "bg-white/5 text-gray-500 border border-white/10"
+                                    ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30"
+                                    : isActive
+                                        ? "bg-gradient-to-br from-purple-600 to-blue-500 text-white shadow-lg shadow-blue-500/30 ring-2 ring-purple-400/40"
+                                        : "bg-white/5 text-gray-500 border border-white/10"
                                     }`}
                             >
                                 {isCompleted ? (
@@ -35,7 +37,7 @@ export default function StepIndicator({ currentStep }) {
                             </span>
                         </div>
                         {/* Connector */}
-                        {i < STEPS.length - 1 && (
+                        {i < steps.length - 1 && (
                             <div
                                 className={`w-6 sm:w-10 h-0.5 rounded-full mb-5 transition-colors duration-300 ${step < currentStep ? "bg-gradient-to-r from-purple-500 to-pink-500" : "bg-white/10"
                                     }`}
