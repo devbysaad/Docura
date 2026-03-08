@@ -27,10 +27,10 @@ const sections = [
 export default function PrivacyPolicy() {
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 relative">
-            <div className="absolute top-[-15%] right-[-10%] w-[400px] h-[400px] rounded-full bg-blue-700/10 blur-[140px] pointer-events-none" />
+            <div className="absolute top-[-15%] right-[-10%] w-[400px] h-[400px] rounded-full bg-cyan-900/10 blur-[140px] pointer-events-none" />
 
             <div className="text-center mb-12 relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/20">
+                <div className="w-14 h-14 rounded-2xl bg-cyan-600 flex items-center justify-center mx-auto mb-4">
                     <Lock className="w-6 h-6 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold text-white">Privacy Policy</h1>

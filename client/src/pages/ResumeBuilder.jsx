@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useResumeStore from "../store/resumeStore";
 import useAuthStore from "../store/authStore";
 import { getResumeById, createResume, updateResume } from "../api/dashboard";
-import { generateResumePdf } from "../api/resume";
+import { generateResumePdf, generateResumeDocx } from "../api/resume";
 import StepIndicator from "../components/StepIndicator";
 import BasicInfoForm from "../components/BasicInfoForm";
 import SkillsForm from "../components/SkillsForm";
@@ -14,7 +14,7 @@ import ResumePreview from "../components/ResumePreview";
 import TemplateSelector from "../components/TemplateSelector";
 import AiChatPanel from "../components/AiChatPanel";
 import { Button } from "../components/ui/Button";
-import { MessageSquare, Save, Download } from "lucide-react";
+import { MessageSquare, Save, Download, FileText } from "lucide-react";
 import toast from "react-hot-toast";
 
 const TOTAL_STEPS = 5;
@@ -80,22 +80,30 @@ export default function ResumeBuilder() {
         }
     };
 
-    const handleDownload = async () => {
+    const handleDownload = async (format = "pdf") => {
         setError("");
         setLoading(true);
         try {
-            const blob = await generateResumePdf(resumeData);
+            let blob;
+            let ext;
+            if (format === "docx") {
+                blob = await generateResumeDocx(resumeData);
+                ext = "docx";
+            } else {
+                blob = await generateResumePdf(resumeData);
+                ext = "pdf";
+            }
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `${(resumeData.basics.fullName || "resume").replace(/\s+/g, "_")}_resume.pdf`;
+            a.download = `${(resumeData.basics.fullName || "resume").replace(/\s+/g, "_")}_resume.${ext}`;
             document.body.appendChild(a);
             a.click();
             a.remove();
             URL.revokeObjectURL(url);
-            toast.success("Resume downloaded!");
+            toast.success(`Resume downloaded as ${ext.toUpperCase()}!`);
         } catch (err) {
-            setError(err.message || "Failed to generate PDF.");
+            setError(err.message || "Failed to generate file.");
             toast.error("Download failed");
         } finally {
             setLoading(false);
@@ -116,17 +124,14 @@ export default function ResumeBuilder() {
     return (
         <div className="min-h-screen relative overflow-hidden">
             {/* Ambient orbs */}
-            <div className="absolute top-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full bg-purple-700/15 blur-[140px] pointer-events-none" />
-            <div className="absolute bottom-[-15%] right-[-8%] w-[500px] h-[500px] rounded-full bg-blue-700/15 blur-[140px] pointer-events-none" />
+            <div className="absolute top-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full bg-violet-900/15 blur-[140px] pointer-events-none" />
+            <div className="absolute bottom-[-15%] right-[-8%] w-[500px] h-[500px] rounded-full bg-cyan-900/15 blur-[140px] pointer-events-none" />
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8">
                 {/* Header */}
                 <header className="text-center mb-6">
                     <h1 className="text-3xl font-extrabold tracking-tight text-white">
-                        Build Your{" "}
-                        <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                            Resume
-                        </span>
+                        Build Your <span className="text-violet-400">Resume</span>
                     </h1>
                     <p className="mt-2 text-gray-400 text-sm">
                         Fill in your information, pick a template, and download.
@@ -144,9 +149,7 @@ export default function ResumeBuilder() {
                 {/* Main layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                     {/* Left: Form */}
-                    <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-purple-500/5">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/10 via-pink-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-50 -z-10" />
-
+                    <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
                         {renderStep()}
 
                         {/* Navigation */}
@@ -167,10 +170,15 @@ export default function ResumeBuilder() {
                                         Next →
                                     </Button>
                                 ) : (
-                                    <Button variant="primary" onClick={handleDownload} disabled={loading}>
-                                        <Download className="w-4 h-4" />
-                                        {loading ? "Generating..." : "Download PDF"}
-                                    </Button>
+                                    <div className="flex gap-2">
+                                        <Button variant="primary" onClick={() => handleDownload("pdf")} disabled={loading}>
+                                            <Download className="w-4 h-4" />
+                                            {loading ? "Generating..." : "PDF"}
+                                        </Button>
+                                        <Button variant="outline" onClick={() => handleDownload("docx")} disabled={loading}>
+                                            <FileText className="w-4 h-4" /> DOCX
+                                        </Button>
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -191,7 +199,7 @@ export default function ResumeBuilder() {
                 {/* Mobile preview */}
                 <div className="lg:hidden mt-6">
                     <details className="group">
-                        <summary className="cursor-pointer text-sm text-gray-400 hover:text-purple-400 transition-colors text-center list-none">
+                        <summary className="cursor-pointer text-sm text-gray-400 hover:text-violet-400 transition-colors text-center list-none">
                             <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 border border-white/10">
                                 Toggle Preview
                             </span>
@@ -206,7 +214,7 @@ export default function ResumeBuilder() {
                 {user && (
                     <button
                         onClick={() => setChatOpen(!chatOpen)}
-                        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 text-white flex items-center justify-center shadow-2xl shadow-purple-500/30 hover:scale-105 transition-transform z-40"
+                        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-violet-600 text-white flex items-center justify-center shadow-2xl shadow-violet-500/30 hover:scale-105 transition-transform z-40"
                     >
                         <MessageSquare className="w-6 h-6" />
                     </button>

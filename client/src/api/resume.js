@@ -1,7 +1,7 @@
-const API_BASE = "http://localhost:5000/api/resume";
+import { API_BASE } from "../lib/utils";
 
 export async function saveResume(data) {
-    const res = await fetch(API_BASE, {
+    const res = await fetch(`${API_BASE}/resume`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -14,7 +14,7 @@ export async function saveResume(data) {
 }
 
 export async function getResume(id) {
-    const res = await fetch(`${API_BASE}/${id}`);
+    const res = await fetch(`${API_BASE}/resume/${id}`);
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Resume not found");
@@ -23,14 +23,35 @@ export async function getResume(id) {
 }
 
 export async function generateResumePdf(data) {
-    const res = await fetch(`${API_BASE}/generate-pdf`, {
+    const token = localStorage.getItem("docura_token");
+    const res = await fetch(`${API_BASE}/resume/generate-pdf`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(data),
     });
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Failed to generate PDF");
+    }
+    return res.blob();
+}
+
+export async function generateResumeDocx(data) {
+    const token = localStorage.getItem("docura_token");
+    const res = await fetch(`${API_BASE}/resume/generate-docx`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to generate DOCX");
     }
     return res.blob();
 }

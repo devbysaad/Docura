@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const defaultResumeData = {
-    basics: { fullName: "", profession: "", email: "", phone: "", location: "", summary: "" },
+    basics: { fullName: "", profession: "", email: "", phone: "", location: "", portfolioUrl: "", summary: "" },
     skills: [],
     experience: [],
     projects: [],

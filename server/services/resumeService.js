@@ -15,19 +15,25 @@ const COLORS = {
 /* ── helpers ────────────────────────────────────────────── */
 
 function wrapLine(text, font, fontSize, maxWidth) {
-    const words = text.split(" ");
+    // Split on newlines first — pdf-lib cannot encode \n
+    const paragraphs = String(text).split(/\r?\n/);
     const lines = [];
-    let cur = "";
-    for (const w of words) {
-        const test = cur ? `${cur} ${w}` : w;
-        if (font.widthOfTextAtSize(test, fontSize) > maxWidth && cur) {
-            lines.push(cur);
-            cur = w;
-        } else {
-            cur = test;
+    for (const para of paragraphs) {
+        const cleaned = para.replace(/[\x00-\x1F\x7F]/g, ""); // strip all control chars
+        if (!cleaned) { lines.push(""); continue; }
+        const words = cleaned.split(" ");
+        let cur = "";
+        for (const w of words) {
+            const test = cur ? `${cur} ${w}` : w;
+            if (font.widthOfTextAtSize(test, fontSize) > maxWidth && cur) {
+                lines.push(cur);
+                cur = w;
+            } else {
+                cur = test;
+            }
         }
+        if (cur) lines.push(cur);
     }
-    if (cur) lines.push(cur);
     return lines;
 }
 
@@ -44,6 +50,7 @@ function drawText(ctx, text, { font, fontSize, color, x, maxWidth }) {
     const lines = wrapLine(text, font, fontSize, _mw);
     const lh = fontSize * 1.5;
     for (const line of lines) {
+        if (!line.trim()) { ctx.y -= lh * 0.5; continue; } // skip blank lines
         ensureSpace(ctx, lh);
         ctx.page.drawText(line, { x: _x, y: ctx.y - fontSize, size: fontSize, font, color });
         ctx.y -= lh;
@@ -71,7 +78,7 @@ function sectionTitle(ctx, title) {
 /* ── main ───────────────────────────────────────────────── */
 
 async function createResumePdf(data) {
-    const { basics = {}, skills = [], experience = [], projects = [] } = data;
+    const { basics = {}, skills = [], experience = [], projects = [], education = [] } = data;
     const doc = await PDFDocument.create();
     const regular = await doc.embedFont(StandardFonts.Helvetica);
     const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -86,6 +93,16 @@ async function createResumePdf(data) {
     if (basics.profession) {
         drawText(ctx, basics.profession, { font: regular, fontSize: 12, color: COLORS.accent });
     }
+
+    // Contact line
+    const contactParts = [basics.email, basics.phone, basics.location].filter(Boolean);
+    if (contactParts.length > 0) {
+        drawText(ctx, contactParts.join("  |  "), { font: regular, fontSize: 9, color: COLORS.lightGray });
+    }
+    if (basics.portfolioUrl) {
+        drawText(ctx, basics.portfolioUrl, { font: regular, fontSize: 9, color: COLORS.accent });
+    }
+
     if (basics.summary) {
         ctx.y -= 4;
         drawText(ctx, basics.summary, { font: regular, fontSize: 10, color: COLORS.gray });
@@ -106,13 +123,10 @@ async function createResumePdf(data) {
 
         for (const exp of experience) {
             ensureSpace(ctx, 40);
-            // Role — Company
             const title = [exp.role, exp.company].filter(Boolean).join(" — ");
             if (title) drawText(ctx, title, { font: bold, fontSize: 11, color: COLORS.black });
-            // Dates
             const dates = [exp.startDate, exp.endDate].filter(Boolean).join(" – ");
             if (dates) drawText(ctx, dates, { font: regular, fontSize: 9, color: COLORS.lightGray });
-            // Description
             if (exp.description) {
                 ctx.y -= 2;
                 drawText(ctx, exp.description, { font: regular, fontSize: 10, color: COLORS.gray });
@@ -139,6 +153,22 @@ async function createResumePdf(data) {
                 ctx.y -= 2;
                 drawText(ctx, proj.summary, { font: regular, fontSize: 10, color: COLORS.gray });
             }
+            ctx.y -= 8;
+        }
+    }
+
+    /* ── Education ──────────────────────────────────────── */
+    if (education.length > 0) {
+        ctx.y -= 4;
+        sectionTitle(ctx, "Education");
+
+        for (const ed of education) {
+            ensureSpace(ctx, 30);
+            const degree = [ed.degree, ed.field].filter(Boolean).join(" in ");
+            if (degree) drawText(ctx, degree, { font: bold, fontSize: 11, color: COLORS.black });
+            if (ed.school) drawText(ctx, ed.school, { font: regular, fontSize: 10, color: COLORS.gray });
+            const dates = [ed.startDate, ed.endDate].filter(Boolean).join(" – ");
+            if (dates) drawText(ctx, dates, { font: regular, fontSize: 9, color: COLORS.lightGray });
             ctx.y -= 8;
         }
     }

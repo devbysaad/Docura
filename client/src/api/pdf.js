@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api/pdf";
+import { API_BASE } from "../lib/utils";
 
 /**
  * Send text to the backend and receive a PDF blob.
@@ -6,7 +6,7 @@ const API_BASE = "http://localhost:5000/api/pdf";
  * @returns {Promise<Blob>}
  */
 export async function generatePdf(text) {
-    const response = await fetch(`${API_BASE}/generate`, {
+    const response = await fetch(`${API_BASE}/pdf/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),

@@ -2,10 +2,10 @@ import TextEditor from "../components/TextEditor";
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4 py-16 relative overflow-hidden">
+        <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center justify-center px-4 py-16 relative overflow-hidden">
             {/* Ambient blurred orbs */}
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-purple-700/20 blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-700/20 blur-[120px] pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-violet-900/20 blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-cyan-900/20 blur-[120px] pointer-events-none" />
 
             {/* Title */}
             <header className="mb-10 text-center relative z-10">
@@ -14,10 +14,7 @@ export default function Home() {
                     Online &amp; Ready
                 </div>
                 <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
-                    PDF{" "}
-                    <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                        Converter
-                    </span>
+                    PDF <span className="text-violet-400">Converter</span>
                 </h1>
                 <p className="mt-3 text-gray-400 max-w-md mx-auto text-sm sm:text-base">
                     Transform your text into a clean, downloadable PDF document in seconds.

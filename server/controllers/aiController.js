@@ -63,19 +63,38 @@ async function review(req, res) {
             return res.status(400).json({ error: "Please upload a PDF resume." });
         }
 
-        const fileBuffer = fs.readFileSync(file.path);
-        const parsed = await pdfParse(fileBuffer);
-        const pdfText = parsed.text;
+        let fileBuffer;
+        if (file.buffer) {
+            // Memory storage
+            fileBuffer = file.buffer;
+        } else if (file.path) {
+            // Disk storage
+            fileBuffer = fs.readFileSync(file.path);
+        } else {
+            return res.status(400).json({ error: "Could not read uploaded file." });
+        }
+
+        let pdfText = "";
+        try {
+            // pdf-parse v1.1.1 — pass options to suppress rendering test page
+            const parsed = await pdfParse(fileBuffer, { max: 0 });
+            pdfText = parsed.text || "";
+        } catch (parseErr) {
+            console.error("PDF parse error:", parseErr.message);
+            return res.status(400).json({ error: "Could not parse the PDF. Make sure it's a valid PDF file (not scanned/image-only)." });
+        }
+
+        // Clean up uploaded file from disk
+        if (file.path) {
+            try { fs.unlinkSync(file.path); } catch (_) { }
+        }
 
         if (!pdfText || pdfText.trim().length < 20) {
-            return res.status(400).json({ error: "Could not extract text from the PDF. Make sure it's not a scanned image." });
+            return res.status(400).json({ error: "Could not extract enough text from the PDF. Make sure it's not a scanned image." });
         }
 
         const result = await reviewResume(pdfText, jobDescription, req.user?.id);
         await incrementUsage(req.user.id, "ai");
-
-        // Clean up uploaded file
-        fs.unlinkSync(file.path);
 
         return res.json(result);
     } catch (err) {

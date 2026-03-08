@@ -5,14 +5,11 @@ export function Card({ className, children, glow = false, ...props }) {
         <div
             className={cn(
                 "relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl",
-                glow && "shadow-purple-500/5",
+                glow && "border-violet-500/20 shadow-violet-500/5",
                 className
             )}
             {...props}
         >
-            {glow && (
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/10 via-pink-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-50 -z-10" />
-            )}
             {children}
         </div>
     );

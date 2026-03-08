@@ -1,7 +1,7 @@
 export default function BasicInfoForm({ data, onChange }) {
     const update = (field) => (e) => onChange({ ...data, [field]: e.target.value });
 
-    const inputClass = "w-full rounded-xl bg-gray-900/60 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300";
+    const inputClass = "w-full rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-all duration-300";
 
     return (
         <div className="space-y-5">
@@ -11,7 +11,7 @@ export default function BasicInfoForm({ data, onChange }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="fullName" className="block text-xs font-medium text-gray-400 mb-1.5 ml-1">
-                        Full Name <span className="text-pink-400">*</span>
+                        Full Name <span className="text-red-400">*</span>
                     </label>
                     <input id="fullName" type="text" value={data.fullName || ""} onChange={update("fullName")} placeholder="John Doe" className={inputClass} />
                 </div>
@@ -38,11 +38,19 @@ export default function BasicInfoForm({ data, onChange }) {
                 </div>
             </div>
 
-            <div>
-                <label htmlFor="location" className="block text-xs font-medium text-gray-400 mb-1.5 ml-1">
-                    Location
-                </label>
-                <input id="location" type="text" value={data.location || ""} onChange={update("location")} placeholder="San Francisco, CA" className={inputClass} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label htmlFor="location" className="block text-xs font-medium text-gray-400 mb-1.5 ml-1">
+                        Location
+                    </label>
+                    <input id="location" type="text" value={data.location || ""} onChange={update("location")} placeholder="San Francisco, CA" className={inputClass} />
+                </div>
+                <div>
+                    <label htmlFor="portfolioUrl" className="block text-xs font-medium text-gray-400 mb-1.5 ml-1">
+                        Portfolio URL
+                    </label>
+                    <input id="portfolioUrl" type="url" value={data.portfolioUrl || ""} onChange={update("portfolioUrl")} placeholder="https://myportfolio.com" className={inputClass} />
+                </div>
             </div>
 
             <div>

@@ -27,10 +27,10 @@ const sections = [
 export default function TermsAndConditions() {
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 relative">
-            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-purple-700/10 blur-[140px] pointer-events-none" />
+            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-violet-900/10 blur-[140px] pointer-events-none" />
 
             <div className="text-center mb-12 relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/20">
+                <div className="w-14 h-14 rounded-2xl bg-violet-600 flex items-center justify-center mx-auto mb-4">
                     <Shield className="w-6 h-6 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold text-white">Terms and Conditions</h1>

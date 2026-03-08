@@ -36,14 +36,11 @@ export default function TextEditor() {
     return (
         <div className="w-full max-w-3xl mx-auto">
             {/* Card */}
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl shadow-purple-500/5">
-                {/* Glow accent */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/20 via-pink-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-60 -z-10" />
-
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl shadow-violet-500/5">
                 {/* Header */}
                 <div className="mb-8 text-center">
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                        Text to PDF
+                    <h2 className="text-2xl font-bold text-white">
+                        Text to <span className="text-violet-400">PDF</span>
                     </h2>
                     <p className="mt-2 text-sm text-gray-400">
                         Enter your text below and download it as a beautifully formatted PDF.
@@ -57,7 +54,7 @@ export default function TextEditor() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder="Start typing your content here..."
-                    className="w-full rounded-xl bg-gray-900/60 border border-white/10 text-gray-100 placeholder-gray-500 p-4 text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
+                    className="w-full rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-500 p-4 text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300"
                 />
 
                 {/* File name input */}
@@ -69,7 +66,7 @@ export default function TextEditor() {
                         >
                             File Name
                         </label>
-                        <div className="flex items-center rounded-xl bg-gray-900/60 border border-white/10 focus-within:ring-2 focus-within:ring-purple-500/50 focus-within:border-purple-500/50 transition-all duration-300 overflow-hidden">
+                        <div className="flex items-center rounded-xl bg-white/5 border border-white/10 focus-within:ring-2 focus-within:ring-violet-400/50 focus-within:border-violet-400/50 transition-all duration-300 overflow-hidden">
                             <input
                                 id="file-name"
                                 type="text"
@@ -88,13 +85,9 @@ export default function TextEditor() {
                             id="generate-btn"
                             onClick={handleGenerate}
                             disabled={loading}
-                            className="relative group w-full sm:w-auto px-8 py-2.5 rounded-xl font-semibold text-sm text-white overflow-hidden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full sm:w-auto px-8 py-2.5 rounded-xl font-semibold text-sm text-white bg-violet-600 hover:bg-violet-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-violet-500/25"
                         >
-                            {/* Button gradient background */}
-                            <span className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 transition-opacity duration-300 group-hover:opacity-90" />
-                            {/* Shine effect */}
-                            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full" />
-                            <span className="relative flex items-center justify-center gap-2">
+                            <span className="flex items-center justify-center gap-2">
                                 {loading ? (
                                     <>
                                         <svg

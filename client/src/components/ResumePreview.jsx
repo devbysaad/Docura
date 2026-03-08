@@ -10,8 +10,7 @@ export default function ResumePreview({ data, templateId = "modern-minimal" }) {
                 <h3 className="text-sm font-semibold text-gray-400">Live Preview</h3>
                 <span className="text-xs text-gray-600">{template.name}</span>
             </div>
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/5">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/10 via-pink-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-50 -z-10" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-violet-500/5">
                 <div className="overflow-y-auto max-h-[75vh] rounded-2xl" style={{ transform: "scale(0.65)", transformOrigin: "top left", width: "153.8%", height: "153.8%" }}>
                     <TemplateComponent data={data} />
                 </div>

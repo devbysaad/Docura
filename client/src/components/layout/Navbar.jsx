@@ -4,8 +4,8 @@ import useAuthStore from "../../store/authStore";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import {
-    FileText, LayoutDashboard, Wand2, MessageSquare, Search,
-    Wrench, Image, LogOut, Menu, X, CreditCard, ChevronDown, User
+    FileText, LayoutDashboard, Wand2, Search,
+    Wrench, LogOut, Menu, X, CreditCard, ChevronDown
 } from "lucide-react";
 
 const navLinks = [
@@ -30,16 +30,16 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-xl border-b border-white/5">
+        <nav className="sticky top-0 z-50 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-2.5 group">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+                        <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
                             <FileText className="w-4 h-4 text-white" />
                         </div>
                         <span className="text-lg font-bold text-white tracking-tight">
-                            Docu<span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">ra</span>
+                            Docu<span className="text-violet-400">ra</span>
                         </span>
                     </Link>
 
@@ -68,7 +68,7 @@ export default function Navbar() {
                                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                                     className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-200"
                                 >
-                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-xs font-bold text-white">
+                                    <div className="w-7 h-7 rounded-full bg-violet-600 flex items-center justify-center text-xs font-bold text-white">
                                         {user.name?.charAt(0)?.toUpperCase() || "U"}
                                     </div>
                                     <span className="hidden sm:block text-sm text-gray-300">{user.name}</span>
@@ -81,7 +81,7 @@ export default function Navbar() {
                                 {userMenuOpen && (
                                     <>
                                         <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
-                                        <div className="absolute right-0 mt-2 w-56 bg-gray-900 border border-white/10 rounded-xl shadow-2xl shadow-black/50 z-50 py-1 overflow-hidden">
+                                        <div className="absolute right-0 mt-2 w-56 bg-[#12121a] border border-white/10 rounded-xl shadow-2xl shadow-black/50 z-50 py-1 overflow-hidden">
                                             <div className="px-4 py-3 border-b border-white/5">
                                                 <p className="text-sm font-medium text-white">{user.name}</p>
                                                 <p className="text-xs text-gray-500">{user.email}</p>
@@ -123,7 +123,7 @@ export default function Navbar() {
 
             {/* Mobile nav */}
             {mobileOpen && (
-                <div className="lg:hidden border-t border-white/5 bg-gray-950/95 backdrop-blur-xl">
+                <div className="lg:hidden border-t border-white/5 bg-[#0a0a0f]/95 backdrop-blur-xl">
                     <div className="px-4 py-3 space-y-1">
                         {navLinks.map(({ path, label, icon: Icon }) => (
                             <Link

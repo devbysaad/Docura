@@ -46,7 +46,7 @@ export default function ResumeReview() {
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 relative">
-            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-cyan-700/10 blur-[140px] pointer-events-none" />
+            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-cyan-900/10 blur-[140px] pointer-events-none" />
 
             <div className="text-center mb-10 relative z-10">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-400 mb-4">
@@ -60,7 +60,7 @@ export default function ResumeReview() {
                 <Card glow className="p-6">
                     {/* File upload */}
                     <div
-                        className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${file ? "border-emerald-500/30 bg-emerald-500/5" : "border-white/10 hover:border-purple-500/30"
+                        className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer ${file ? "border-emerald-500/30 bg-emerald-500/5" : "border-white/10 hover:border-violet-500/30"
                             }`}
                         onClick={() => document.getElementById("resume-upload").click()}
                     >
@@ -167,13 +167,13 @@ export default function ResumeReview() {
 
                         {/* Suggestions */}
                         <Card className="p-5">
-                            <h3 className="text-sm font-semibold text-blue-400 flex items-center gap-2 mb-3">
+                            <h3 className="text-sm font-semibold text-cyan-400 flex items-center gap-2 mb-3">
                                 <TrendingUp className="w-4 h-4" /> Improvement Suggestions
                             </h3>
                             <ol className="space-y-2">
                                 {result.suggestions?.map((s, i) => (
                                     <li key={i} className="text-xs text-gray-300 flex items-start gap-2">
-                                        <span className="text-blue-400 font-bold">{i + 1}.</span> {s}
+                                        <span className="text-cyan-400 font-bold">{i + 1}.</span> {s}
                                     </li>
                                 ))}
                             </ol>

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { chatWithAi } from "../api/ai";
 import { Button } from "./ui/Button";
-import { MessageSquare, Send, X, Sparkles, Bot, User } from "lucide-react";
+import { Send, X, Sparkles, Bot, User } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function AiChatPanel({ resumeData, isOpen, onClose }) {
@@ -46,11 +46,11 @@ export default function AiChatPanel({ resumeData, isOpen, onClose }) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed bottom-4 right-4 w-96 max-w-[calc(100vw-2rem)] bg-gray-900 border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 flex flex-col overflow-hidden" style={{ height: "500px" }}>
+        <div className="fixed bottom-4 right-4 w-96 max-w-[calc(100vw-2rem)] bg-[#12121a] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 flex flex-col overflow-hidden" style={{ height: "500px" }}>
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-gray-900/90">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#12121a]">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
                         <Sparkles className="w-4 h-4 text-white" />
                     </div>
                     <div>
@@ -68,27 +68,27 @@ export default function AiChatPanel({ resumeData, isOpen, onClose }) {
                 {messages.map((msg, i) => (
                     <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                         {msg.role === "assistant" && (
-                            <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <Bot className="w-3.5 h-3.5 text-purple-400" />
+                            <div className="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <Bot className="w-3.5 h-3.5 text-violet-400" />
                             </div>
                         )}
                         <div className={`max-w-[80%] px-3 py-2 rounded-xl text-sm leading-relaxed ${msg.role === "user"
-                                ? "bg-purple-500/20 text-gray-200"
+                                ? "bg-violet-500/20 text-gray-200"
                                 : "bg-white/5 text-gray-300"
                             }`}>
                             {msg.content}
                         </div>
                         {msg.role === "user" && (
-                            <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <User className="w-3.5 h-3.5 text-blue-400" />
+                            <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <User className="w-3.5 h-3.5 text-cyan-400" />
                             </div>
                         )}
                     </div>
                 ))}
                 {loading && (
                     <div className="flex gap-2">
-                        <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                            <Bot className="w-3.5 h-3.5 text-purple-400" />
+                        <div className="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0">
+                            <Bot className="w-3.5 h-3.5 text-violet-400" />
                         </div>
                         <div className="bg-white/5 rounded-xl px-3 py-2">
                             <div className="flex gap-1">
@@ -110,7 +110,7 @@ export default function AiChatPanel({ resumeData, isOpen, onClose }) {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder="Ask for resume help..."
-                        className="flex-1 rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="flex-1 rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-400/50"
                         disabled={loading}
                     />
                     <Button size="icon" variant="primary" onClick={handleSend} disabled={loading || !input.trim()}>

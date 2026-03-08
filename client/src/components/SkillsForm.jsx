@@ -36,12 +36,12 @@ export default function SkillsForm({ data, onChange }) {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="e.g. React, Node.js, Python"
-                    className="flex-1 rounded-xl bg-gray-900/60 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300"
+                    className="flex-1 rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-all duration-300"
                 />
                 <button
                     type="button"
                     onClick={addSkill}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity duration-200"
+                    className="px-5 py-2.5 rounded-xl bg-violet-600 text-white text-sm font-semibold hover:bg-violet-500 transition-colors duration-200"
                 >
                     Add
                 </button>
@@ -52,7 +52,7 @@ export default function SkillsForm({ data, onChange }) {
                 {skills.map((skill, i) => (
                     <span
                         key={i}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium group"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs font-medium group"
                     >
                         {skill}
                         <button

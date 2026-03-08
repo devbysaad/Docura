@@ -20,7 +20,7 @@ export default function ExperienceForm({ data, onChange }) {
     };
 
     const inputClass =
-        "w-full rounded-xl bg-gray-900/60 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300";
+        "w-full rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-all duration-300";
 
     return (
         <div className="space-y-5">
@@ -72,7 +72,7 @@ export default function ExperienceForm({ data, onChange }) {
             <button
                 type="button"
                 onClick={addExperience}
-                className="w-full py-2.5 rounded-xl border border-dashed border-white/10 text-gray-500 text-sm hover:border-purple-500/40 hover:text-purple-400 transition-all duration-300"
+                className="w-full py-2.5 rounded-xl border border-dashed border-white/10 text-gray-500 text-sm hover:border-violet-500/40 hover:text-violet-400 transition-all duration-300"
             >
                 + Add Experience
             </button>

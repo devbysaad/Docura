@@ -37,10 +37,10 @@ export default function TemplateFromImage() {
 
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 relative">
-            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-violet-700/10 blur-[140px] pointer-events-none" />
+            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-violet-900/10 blur-[140px] pointer-events-none" />
 
             <div className="text-center mb-10 relative z-10">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 mb-4">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-400 mb-4">
                     <Image className="w-3.5 h-3.5" /> AI Template Creator
                 </div>
                 <h1 className="text-3xl font-bold text-white">Template From Image</h1>
@@ -114,7 +114,7 @@ export default function TemplateFromImage() {
                                     {result.css && <style>{result.css}</style>}
                                 </div>
                             ) : (
-                                <pre className="bg-gray-900/80 rounded-lg p-4 text-xs text-gray-300 overflow-auto max-h-[500px] whitespace-pre-wrap">
+                                <pre className="bg-[#12121a] rounded-lg p-4 text-xs text-gray-300 overflow-auto max-h-[500px] whitespace-pre-wrap">
                                     {result.html}
                                     {result.css && `\n\n/* CSS */\n${result.css}`}
                                 </pre>

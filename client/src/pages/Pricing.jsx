@@ -11,7 +11,7 @@ const plans = [
         period: "forever",
         desc: "Perfect for getting started",
         icon: Zap,
-        color: "from-gray-500 to-gray-600",
+        color: "bg-gray-600",
         features: [
             { text: "5 AI generations / month", included: true },
             { text: "2 resume downloads / month", included: true },
@@ -31,7 +31,7 @@ const plans = [
         period: "/ month",
         desc: "For serious job seekers",
         icon: Crown,
-        color: "from-purple-500 to-blue-500",
+        color: "bg-violet-600",
         popular: true,
         features: [
             { text: "Unlimited AI generations", included: true },
@@ -51,15 +51,14 @@ const plans = [
 export default function Pricing() {
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20 relative">
-            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-purple-700/10 blur-[140px] pointer-events-none" />
+            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-violet-900/10 blur-[140px] pointer-events-none" />
 
             <div className="text-center mb-16 relative z-10">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400 mb-4">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-400" /> Simple Pricing
+                    <Sparkles className="w-3.5 h-3.5 text-violet-400" /> Simple Pricing
                 </div>
                 <h1 className="text-4xl font-bold text-white">
-                    Choose Your{" "}
-                    <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Plan</span>
+                    Choose Your <span className="text-violet-400">Plan</span>
                 </h1>
                 <p className="text-gray-400 mt-3 max-w-lg mx-auto">Start free, upgrade when you need more power.</p>
             </div>
@@ -69,7 +68,7 @@ export default function Pricing() {
                     <Card
                         key={plan.name}
                         glow={plan.popular}
-                        className={`p-8 relative ${plan.popular ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
+                        className={`p-8 relative ${plan.popular ? "border-violet-500/30 ring-1 ring-violet-500/20" : ""}`}
                     >
                         {plan.popular && (
                             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -77,7 +76,7 @@ export default function Pricing() {
                             </div>
                         )}
 
-                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${plan.color} flex items-center justify-center mb-6 shadow-lg`}>
+                        <div className={`w-12 h-12 rounded-2xl ${plan.color} flex items-center justify-center mb-6`}>
                             <plan.icon className="w-6 h-6 text-white" />
                         </div>
 

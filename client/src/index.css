@@ -5,15 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --color-brand: #8b5cf6;
-  --color-brand-light: #a78bfa;
-  --color-bg: #09090b;
-  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-bg: #0a0a0f;
+  --color-surface: #12121a;
+  --color-violet: #a78bfa;
+  --color-cyan: #22d3ee;
+  --color-text: #e5e7eb;
+  --color-muted: #6b7280;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+  scrollbar-color: rgba(167, 139, 250, 0.3) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -25,20 +27,20 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.25);
+  background: rgba(167, 139, 250, 0.25);
   border-radius: 9999px;
 }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background-color: var(--color-bg);
-  color: #e5e7eb;
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background-color: rgba(139, 92, 246, 0.3);
+  background-color: rgba(167, 139, 250, 0.3);
   color: #fff;
 }
 

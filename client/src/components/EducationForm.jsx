@@ -10,14 +10,14 @@ export default function EducationForm({ data, onChange }) {
         onChange(copy);
     };
 
-    const inputClass = "w-full rounded-xl bg-gray-900/60 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all duration-300";
+    const inputClass = "w-full rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-all duration-300";
 
     return (
         <div className="space-y-5">
             <div className="flex items-center justify-between">
                 <div>
                     <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                        <GraduationCap className="w-5 h-5 text-purple-400" /> Education
+                        <GraduationCap className="w-5 h-5 text-violet-400" /> Education
                     </h3>
                     <p className="text-sm text-gray-500 mt-0.5">Add your educational background.</p>
                 </div>
