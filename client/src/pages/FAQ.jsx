@@ -41,11 +41,11 @@ function FaqItem({ q, a }) {
 export default function FAQ() {
     return (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 relative">
-            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-violet-900/10 blur-[140px] pointer-events-none" />
+
 
             <div className="text-center mb-12 relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-violet-600 flex items-center justify-center mx-auto mb-4">
-                    <HelpCircle className="w-6 h-6 text-white" />
+                <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
+                    <HelpCircle className="w-6 h-6 text-black" />
                 </div>
                 <h1 className="text-3xl font-bold text-white">Frequently Asked Questions</h1>
                 <p className="text-gray-400 text-sm mt-2">Everything you need to know about Docura</p>

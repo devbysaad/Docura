@@ -34,6 +34,9 @@ async function generateWithRetry(prompt, maxRetries = 3, options = {}) {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
             console.log(`[Gemini] Sending request (attempt ${attempt + 1}/${maxRetries + 1}), prompt length: ${typeof prompt === "string" ? prompt.length : "multipart"} chars`);
+            if (typeof prompt === "string") {
+                console.log(`[Gemini] Prompt preview: ${prompt.substring(0, 500)}...\n----------------------------------`);
+            }
 
             let result;
             if (Array.isArray(prompt)) {
@@ -45,7 +48,7 @@ async function generateWithRetry(prompt, maxRetries = 3, options = {}) {
 
             const text = result.response.text();
             console.log(`[Gemini] Response received, length: ${text.length} chars`);
-            console.log(`[Gemini] Response preview: ${text.substring(0, 200)}...`);
+            console.log(`[Gemini] Raw Response Text:\n${text}\n-------------------`);
             return text;
         } catch (err) {
             const isRateLimit = err.status === 429 || err.message?.includes("429");
@@ -100,6 +103,12 @@ async function generateWithRetry(prompt, maxRetries = 3, options = {}) {
     } else {
         console.log(`[Gemini] ✓ GEMINI_API_KEY is set (${key.substring(0, 6)}...${key.substring(key.length - 4)})`);
     }
+
+    try {
+        const pkg = require("@google/generative-ai/package.json");
+        console.log(`[Gemini] Package version: @google/generative-ai v${pkg.version}`);
+    } catch (e) {}
+    console.log(`[Gemini] Model version: gemini-2.0-flash`);
 })();
 
 module.exports = { getModel, getVisionModel, generateWithRetry };

@@ -33,7 +33,7 @@ export default function ProjectsForm({ data, onChange }) {
     };
 
     const inputClass =
-        "w-full rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-all duration-300";
+        "w-full rounded-xl bg-white/5 border border-white/[0.08] text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-300";
 
     return (
         <div className="space-y-5">
@@ -68,7 +68,7 @@ export default function ProjectsForm({ data, onChange }) {
                             {proj.image && (
                                 <img src={proj.image} alt="preview" className="w-16 h-16 rounded-lg object-cover border border-white/10" />
                             )}
-                            <label className="cursor-pointer px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 text-xs hover:border-violet-500/40 hover:text-violet-400 transition-all">
+                            <label className="cursor-pointer px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 text-xs hover:border-accent/40 hover:text-accent transition-all">
                                 {proj.image ? "Change image" : "Upload image"}
                                 <input type="file" accept="image/*" onChange={handleImageUpload(i)} className="hidden" />
                             </label>
@@ -96,7 +96,7 @@ export default function ProjectsForm({ data, onChange }) {
             <button
                 type="button"
                 onClick={addProject}
-                className="w-full py-2.5 rounded-xl border border-dashed border-white/10 text-gray-500 text-sm hover:border-violet-500/40 hover:text-violet-400 transition-all duration-300"
+                className="w-full py-2.5 rounded-xl border border-dashed border-white/10 text-gray-500 text-sm hover:border-accent/40 hover:text-accent transition-all duration-300"
             >
                 + Add Project
             </button>

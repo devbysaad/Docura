@@ -1,7 +1,7 @@
 export default function BasicInfoForm({ data, onChange }) {
     const update = (field) => (e) => onChange({ ...data, [field]: e.target.value });
 
-    const inputClass = "w-full rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition-all duration-300";
+    const inputClass = "w-full rounded-xl bg-white/5 border border-white/[0.08] text-gray-100 placeholder-gray-600 text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-300";
 
     return (
         <div className="space-y-5">

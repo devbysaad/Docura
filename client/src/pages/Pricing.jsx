@@ -31,7 +31,7 @@ const plans = [
         period: "/ month",
         desc: "For serious job seekers",
         icon: Crown,
-        color: "bg-violet-600",
+        color: "bg-accent",
         popular: true,
         features: [
             { text: "Unlimited AI generations", included: true },
@@ -51,14 +51,14 @@ const plans = [
 export default function Pricing() {
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20 relative">
-            <div className="absolute top-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-violet-900/10 blur-[140px] pointer-events-none" />
+
 
             <div className="text-center mb-16 relative z-10">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400 mb-4">
-                    <Sparkles className="w-3.5 h-3.5 text-violet-400" /> Simple Pricing
+                    <Sparkles className="w-3.5 h-3.5 text-accent" /> Simple Pricing
                 </div>
                 <h1 className="text-4xl font-bold text-white">
-                    Choose Your <span className="text-violet-400">Plan</span>
+                    Choose Your <span className="text-accent">Plan</span>
                 </h1>
                 <p className="text-gray-400 mt-3 max-w-lg mx-auto">Start free, upgrade when you need more power.</p>
             </div>
@@ -68,7 +68,7 @@ export default function Pricing() {
                     <Card
                         key={plan.name}
                         glow={plan.popular}
-                        className={`p-8 relative ${plan.popular ? "border-violet-500/30 ring-1 ring-violet-500/20" : ""}`}
+                        className={`p-8 relative ${plan.popular ? "border-accent/30 ring-1 ring-accent/20" : ""}`}
                     >
                         {plan.popular && (
                             <div className="absolute -top-3 left-1/2 -translate-x-1/2">

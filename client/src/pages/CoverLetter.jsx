@@ -83,7 +83,7 @@ export default function CoverLetter() {
                                     key={t.value}
                                     onClick={() => setTone(t.value)}
                                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${tone === t.value
-                                        ? "bg-violet-600 text-white"
+                                        ? "bg-accent text-black"
                                         : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10"
                                     }`}
                                 >

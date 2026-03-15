@@ -13,10 +13,10 @@ import EducationForm from "../components/EducationForm";
 import CustomSectionForm from "../components/CustomSectionForm";
 import ResumePreview from "../components/ResumePreview";
 import TemplateSelector from "../components/TemplateSelector";
-import AiChatPanel from "../components/AiChatPanel";
+
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
-import { MessageSquare, Save, Download, FileText, ChevronUp, ChevronDown } from "lucide-react";
+import { Save, Download, FileText, ChevronUp, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
 
 const TOTAL_STEPS = 6;
@@ -36,7 +36,7 @@ export default function ResumeBuilder() {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
-    const [chatOpen, setChatOpen] = useState(false);
+
     const [showReorder, setShowReorder] = useState(false);
 
     // Load existing resume if editing
@@ -263,21 +263,7 @@ export default function ResumeBuilder() {
                     </details>
                 </div>
 
-                {/* AI Chat toggle */}
-                {user && (
-                    <button
-                        onClick={() => setChatOpen(!chatOpen)}
-                        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-violet-600 text-white flex items-center justify-center shadow-2xl hover:scale-105 transition-transform z-40"
-                    >
-                        <MessageSquare className="w-6 h-6" />
-                    </button>
-                )}
 
-                <AiChatPanel
-                    resumeData={resumeData}
-                    isOpen={chatOpen}
-                    onClose={() => setChatOpen(false)}
-                />
             </div>
         </div>
     );

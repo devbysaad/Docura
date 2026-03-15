@@ -18,7 +18,7 @@ export default function Contact() {
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 relative">
-            <div className="absolute top-[-15%] right-[-10%] w-[400px] h-[400px] rounded-full bg-blue-700/10 blur-[140px] pointer-events-none" />
+
 
             <div className="text-center mb-12 relative z-10">
                 <h1 className="text-3xl font-bold text-white">Contact Us</h1>
@@ -32,14 +32,14 @@ export default function Contact() {
                     { icon: Clock, label: "Response Time", value: "Within 24 hours" },
                 ].map((item) => (
                     <Card key={item.label} className="p-5 text-center">
-                        <item.icon className="w-5 h-5 text-purple-400 mx-auto mb-2" />
+                        <item.icon className="w-5 h-5 text-accent mx-auto mb-2" />
                         <p className="text-xs text-gray-500">{item.label}</p>
                         <p className="text-sm text-white font-medium mt-0.5">{item.value}</p>
                     </Card>
                 ))}
             </div>
 
-            <Card glow className="p-8 relative z-10">
+            <Card className="p-8 relative z-10">
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Input placeholder="Your name" value={form.name} onChange={update("name")} required />

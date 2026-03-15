@@ -26,13 +26,12 @@ export default function Login() {
 
     return (
         <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 relative overflow-hidden">
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-violet-900/15 blur-[140px] pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-cyan-900/15 blur-[140px] pointer-events-none" />
 
-            <Card glow className="w-full max-w-md p-8 relative z-10">
+
+            <Card className="w-full max-w-md p-8 relative z-10">
                 <div className="text-center mb-8">
-                    <div className="w-14 h-14 rounded-2xl bg-violet-600 flex items-center justify-center mx-auto mb-4">
-                        <LogIn className="w-6 h-6 text-white" />
+                    <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center mx-auto mb-4">
+                        <LogIn className="w-6 h-6 text-black" />
                     </div>
                     <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
                     <p className="text-sm text-gray-500 mt-1">Sign in to your Docura account</p>
@@ -74,7 +73,7 @@ export default function Login() {
 
                 <p className="text-center text-sm text-gray-500 mt-6">
                     Don't have an account?{" "}
-                    <Link to="/register" className="text-violet-400 hover:text-violet-300 font-medium transition-colors">
+                    <Link to="/register" className="text-accent hover:text-accent-hover font-medium transition-colors">
                         Create one
                     </Link>
                 </p>

@@ -36,11 +36,11 @@ export default function TextEditor() {
     return (
         <div className="w-full max-w-3xl mx-auto">
             {/* Card */}
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl shadow-violet-500/5">
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-8 shadow-2xl shadow-black/20">
                 {/* Header */}
                 <div className="mb-8 text-center">
                     <h2 className="text-2xl font-bold text-white">
-                        Text to <span className="text-violet-400">PDF</span>
+                        Text to <span className="text-accent">PDF</span>
                     </h2>
                     <p className="mt-2 text-sm text-gray-400">
                         Enter your text below and download it as a beautifully formatted PDF.
@@ -54,7 +54,7 @@ export default function TextEditor() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder="Start typing your content here..."
-                    className="w-full rounded-xl bg-white/5 border border-white/10 text-gray-100 placeholder-gray-500 p-4 text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300"
+                    className="w-full rounded-xl bg-white/5 border border-white/[0.08] text-gray-100 placeholder-gray-500 p-4 text-sm leading-relaxed resize-none focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/40 transition-all duration-300"
                 />
 
                 {/* File name input */}
@@ -66,7 +66,7 @@ export default function TextEditor() {
                         >
                             File Name
                         </label>
-                        <div className="flex items-center rounded-xl bg-white/5 border border-white/10 focus-within:ring-2 focus-within:ring-violet-400/50 focus-within:border-violet-400/50 transition-all duration-300 overflow-hidden">
+                        <div className="flex items-center rounded-xl bg-white/5 border border-white/[0.08] focus-within:ring-2 focus-within:ring-accent/40 focus-within:border-accent/40 transition-all duration-300 overflow-hidden">
                             <input
                                 id="file-name"
                                 type="text"
@@ -85,7 +85,7 @@ export default function TextEditor() {
                             id="generate-btn"
                             onClick={handleGenerate}
                             disabled={loading}
-                            className="w-full sm:w-auto px-8 py-2.5 rounded-xl font-semibold text-sm text-white bg-violet-600 hover:bg-violet-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-violet-500/25"
+                            className="w-full sm:w-auto px-8 py-2.5 rounded-xl font-semibold text-sm text-black bg-accent hover:bg-accent-hover transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-accent/15"
                         >
                             <span className="flex items-center justify-center gap-2">
                                 {loading ? (

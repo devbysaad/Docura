@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import AuthGuard from "./components/layout/AuthGuard";
+import AiChatPanel from "./components/AiChatPanel";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -52,6 +53,7 @@ function App() {
                     </Routes>
                 </main>
                 <Footer />
+                <AiChatPanel />
                 <Toaster
                     position="bottom-right"
                     toastOptions={{

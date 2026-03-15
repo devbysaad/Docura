@@ -16,20 +16,17 @@ const PORT = process.env.PORT || 5000;
 
 // ── Startup validation ──────────────────────────────────
 (function validateEnv() {
-    const required = ["DATABASE_URL", "JWT_SECRET"];
+    const required = ["DATABASE_URL", "JWT_SECRET", "GEMINI_API_KEY"];
     const missing = required.filter((k) => !process.env[k]);
     if (missing.length > 0) {
         console.error(`❌ Missing required env vars: ${missing.join(", ")}. Check your .env file.`);
         process.exit(1);
     }
-    if (!process.env.GEMINI_API_KEY) {
-        console.warn("⚠ GEMINI_API_KEY is not set — AI features will not work.");
-    }
     console.log("✓ Environment variables validated");
 })();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"] }));
 app.use(helmet());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));

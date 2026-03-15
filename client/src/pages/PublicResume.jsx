@@ -26,7 +26,7 @@ export default function PublicResume() {
     if (loading) {
         return (
             <div className="min-h-[70vh] flex items-center justify-center">
-                <div className="animate-spin w-8 h-8 border-2 border-violet-500/30 border-t-violet-500 rounded-full" />
+                <div className="animate-spin w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full" />
             </div>
         );
     }

@@ -51,10 +51,10 @@ export default function AiGenerator() {
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 relative">
-            <div className="absolute top-[-15%] right-[-10%] w-[400px] h-[400px] rounded-full bg-violet-900/10 blur-[140px] pointer-events-none" />
+
 
             <div className="text-center mb-10 relative z-10">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 mb-4">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs text-accent mb-4">
                     <Sparkles className="w-3.5 h-3.5" /> AI-Powered
                 </div>
                 <h1 className="text-3xl font-bold text-white">AI Resume Generator</h1>
@@ -62,7 +62,7 @@ export default function AiGenerator() {
             </div>
 
             <div className="space-y-6 relative z-10">
-                <Card glow className="p-6">
+                <Card className="p-6">
                     <Textarea
                         rows={4}
                         placeholder="e.g. Senior frontend developer with 5 years of React and TypeScript experience, specializing in fintech products..."
@@ -101,11 +101,11 @@ export default function AiGenerator() {
 
                         <Card className="p-6">
                             <h3 className="text-sm font-semibold text-white flex items-center gap-2 mb-3">
-                                <Zap className="w-4 h-4 text-cyan-400" /> Suggested Skills
+                                <Zap className="w-4 h-4 text-accent" /> Suggested Skills
                             </h3>
                             <div className="flex flex-wrap gap-2">
                                 {result.skills?.map((s, i) => (
-                                    <span key={i} className="px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-xs text-violet-300">{s}</span>
+                                    <span key={i} className="px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-xs text-accent">{s}</span>
                                 ))}
                             </div>
                         </Card>

@@ -13,7 +13,7 @@ function safeJsonParse(text, context) {
         return JSON.parse(cleaned);
     } catch (err) {
         console.error(`[AI] JSON parse failed (${context}). Raw text:\n${cleaned.substring(0, 500)}`);
-        throw new Error(`AI returned invalid JSON. Raw response preview: "${cleaned.substring(0, 200)}..."`);
+        throw new Error(`AI returned invalid JSON. Raw response preview:\n${text}`);
     }
 }
 
@@ -49,7 +49,9 @@ Return ONLY valid JSON with this exact structure:
 Make the content professional, ATS-friendly, and tailored to the description. Include realistic but generic company names. Return ONLY the JSON, no markdown formatting.`;
 
     console.log(`[AI] generateResumeContent called — desc length: ${description.length}, tone: ${tone}`);
+    console.log(`[AI] generateResumeContent prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const text = await generateWithRetry(prompt);
+    console.log(`[AI] generateResumeContent response received, length is ${text.length}`);
 
     // Save to AI history
     if (userId) {
@@ -79,7 +81,9 @@ User message: "${message}"
 Provide helpful, specific, and actionable advice. If the user asks to rewrite something, provide the improved version directly. If suggesting skills, be specific to their field. Keep responses concise but thorough. Use markdown formatting for readability.`;
 
     console.log(`[AI] chatWithAssistant called — message: "${message.substring(0, 80)}..."`);
+    console.log(`[AI] chatWithAssistant prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const response = await generateWithRetry(prompt);
+    console.log(`[AI] chatWithAssistant response received, length is ${response.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
@@ -131,7 +135,9 @@ Provide your analysis in the following JSON format ONLY (no markdown):
 Be honest, specific, and constructive. Score out of 10. Return ONLY the JSON.`;
 
     console.log(`[AI] reviewResume called — text length: ${pdfText.length}, has JD: ${!!jobDescription}`);
+    console.log(`[AI] reviewResume prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const text = await generateWithRetry(prompt);
+    console.log(`[AI] reviewResume response received, length is ${text.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
@@ -168,6 +174,7 @@ The HTML should:
 Return ONLY the JSON, no markdown.`;
 
     console.log(`[AI] analyzeTemplateImage called — image: ${imagePath}, mime: ${mimeType}`);
+    console.log(`[AI] analyzeTemplateImage prompt sent:\n${prompt.substring(0, 200)}...\n---`);
 
     // Use generateWithRetry with custom model for retry/error handling
     const text = await generateWithRetry(
@@ -175,6 +182,7 @@ Return ONLY the JSON, no markdown.`;
         3,
         { model: visionModel }
     );
+    console.log(`[AI] analyzeTemplateImage response received, length is ${text.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
@@ -208,7 +216,9 @@ Write a compelling cover letter (3-4 paragraphs) that:
 Return the cover letter as plain text (not JSON). Use professional formatting.`;
 
     console.log(`[AI] generateCoverLetter called — tone: ${tone}`);
+    console.log(`[AI] generateCoverLetter prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const text = await generateWithRetry(prompt);
+    console.log(`[AI] generateCoverLetter response received, length is ${text.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
@@ -247,7 +257,9 @@ Return ONLY valid JSON:
 Be specific and actionable. Return ONLY the JSON.`;
 
     console.log(`[AI] matchJobDescription called`);
+    console.log(`[AI] matchJobDescription prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const text = await generateWithRetry(prompt);
+    console.log(`[AI] matchJobDescription response received, length is ${text.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
@@ -278,7 +290,9 @@ Return ONLY valid JSON:
 Focus on: action verbs, quantifiable results, specific impact. Return ONLY the JSON.`;
 
     console.log(`[AI] rewriteBulletPoint called — original: "${original.substring(0, 60)}..."`);
+    console.log(`[AI] rewriteBulletPoint prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const text = await generateWithRetry(prompt);
+    console.log(`[AI] rewriteBulletPoint response received, length is ${text.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
@@ -310,7 +324,9 @@ Return ONLY valid JSON:
 Make it ATS-friendly, specific, and compelling. Return ONLY the JSON.`;
 
     console.log(`[AI] generateSummary called — tone: ${tone}`);
+    console.log(`[AI] generateSummary prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const text = await generateWithRetry(prompt);
+    console.log(`[AI] generateSummary response received, length is ${text.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
@@ -357,7 +373,9 @@ Return ONLY valid JSON:
 Be thorough and specific. Return ONLY the JSON.`;
 
     console.log(`[AI] atsCheck called`);
+    console.log(`[AI] atsCheck prompt sent:\n${prompt.substring(0, 200)}...\n---`);
     const text = await generateWithRetry(prompt);
+    console.log(`[AI] atsCheck response received, length is ${text.length}`);
 
     if (userId) {
         await prisma.aiHistory.create({
