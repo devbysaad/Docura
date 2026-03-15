@@ -42,7 +42,6 @@ async function splitPdf(buffer, ranges) {
     const results = [];
 
     if (ranges && ranges.length > 0) {
-        // Split by specified ranges like [{start: 0, end: 2}, {start: 3, end: 5}]
         for (const range of ranges) {
             const newDoc = await PDFDocument.create();
             const start = Math.max(0, range.start);
@@ -54,7 +53,6 @@ async function splitPdf(buffer, ranges) {
             results.push(await newDoc.save());
         }
     } else {
-        // Split into individual pages
         for (let i = 0; i < totalPages; i++) {
             const newDoc = await PDFDocument.create();
             const [page] = await newDoc.copyPages(srcDoc, [i]);
@@ -64,6 +62,45 @@ async function splitPdf(buffer, ranges) {
     }
 
     return results;
+}
+
+/**
+ * Compress a PDF by re-saving it (strips unused objects, metadata).
+ */
+async function compressPdf(buffer) {
+    const srcDoc = await PDFDocument.load(buffer);
+    return srcDoc.save({
+        useObjectStreams: true,
+        addDefaultPage: false,
+    });
+}
+
+/**
+ * Add a text watermark to every page of a PDF.
+ */
+async function addWatermark(buffer, text) {
+    const { rgb, degrees, StandardFonts } = require("pdf-lib");
+    const doc = await PDFDocument.load(buffer);
+    const font = await doc.embedFont(StandardFonts.HelveticaBold);
+    const pages = doc.getPages();
+
+    for (const page of pages) {
+        const { width, height } = page.getSize();
+        const fontSize = Math.min(width, height) * 0.08;
+        const textWidth = font.widthOfTextAtSize(text, fontSize);
+
+        page.drawText(text, {
+            x: (width - textWidth) / 2,
+            y: height / 2,
+            size: fontSize,
+            font,
+            color: rgb(0.7, 0.7, 0.7),
+            opacity: 0.3,
+            rotate: degrees(45),
+        });
+    }
+
+    return doc.save();
 }
 
 /**
@@ -107,4 +144,4 @@ function extractSections(lines) {
     return sections;
 }
 
-module.exports = { extractTextFromPdf, textToPdf, mergePdfs, splitPdf, parseResumeText };
+module.exports = { extractTextFromPdf, textToPdf, mergePdfs, splitPdf, compressPdf, addWatermark, parseResumeText };

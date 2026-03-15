@@ -22,18 +22,23 @@ model User {
 }
 
 model Resume {
-  id         String   @id @default(uuid())
-  userId     String
-  title      String   @default("Untitled Resume")
-  data       Json     // full resume data object
-  templateId String   @default("modern-minimal")
-  isDraft    Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            String   @id @default(uuid())
+  userId        String
+  title         String   @default("Untitled Resume")
+  data          Json     // full resume data object
+  templateId    String   @default("modern-minimal")
+  isDraft       Boolean  @default(true)
+  version       Int      @default(1)
+  parentId      String?  // links to original resume for versioning
+  downloadCount Int      @default(0)
+  publicSlug    String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([publicSlug])
 }
 
 model AiHistory {

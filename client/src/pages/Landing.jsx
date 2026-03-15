@@ -1,132 +1,136 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
-import { FileText, Wand2, MessageSquare, Search, Wrench, Layout, ArrowRight, Sparkles, Zap, Star } from "lucide-react";
+import {
+    FileText, Wand2, Download, Search, Shield, Zap,
+    ArrowRight, CheckCircle2, Star, ChevronRight, Mail
+} from "lucide-react";
 
 const features = [
-    { icon: FileText, title: "Resume Builder", desc: "Multi-step form with live preview. 5 sections, drag & drop.", color: "bg-violet-600" },
-    { icon: Layout, title: "4+ Templates", desc: "Modern Minimal, Corporate, Developer, Creative Designer.", color: "bg-cyan-600" },
-    { icon: Wand2, title: "AI Generator", desc: "Type your role — get a full resume with skills & projects.", color: "bg-violet-600" },
-    { icon: MessageSquare, title: "AI Chat Assistant", desc: "Ask for improvements, rewrites, and tailored suggestions.", color: "bg-cyan-600" },
-    { icon: Search, title: "Resume Review", desc: "Upload your PDF — get ATS score, feedback & keywords.", color: "bg-violet-600" },
-    { icon: Wrench, title: "PDF Tools", desc: "Merge, split, convert. Text→PDF, PDF→Text, and more.", color: "bg-cyan-600" },
+    { icon: Wand2, title: "AI-Powered Content", desc: "Generate tailored resume sections using AI that understands your career." },
+    { icon: FileText, title: "6 Pro Templates", desc: "Modern Minimal, Corporate, Developer, Creative, Executive, and ATS-friendly." },
+    { icon: Search, title: "ATS Score Checker", desc: "Scan your resume for ATS compatibility issues before you apply." },
+    { icon: Download, title: "PDF & DOCX Export", desc: "Download in any format. Merge, split, compress, and watermark PDFs." },
+    { icon: Mail, title: "Cover Letter AI", desc: "Paste a job description, get a tailored cover letter instantly." },
+    { icon: Shield, title: "Privacy First", desc: "Your data stays yours. No selling, no ads, no tracking." },
 ];
 
 const stats = [
-    { value: "10K+", label: "Resumes Created" },
-    { value: "95%", label: "ATS Pass Rate" },
-    { value: "4.9", label: "User Rating" },
-    { value: "50+", label: "Templates" },
+    { value: "6", label: "Resume Templates" },
+    { value: "5+", label: "AI Features" },
+    { value: "8", label: "PDF Tools" },
+    { value: "100%", label: "Free Tier" },
 ];
 
 export default function Landing() {
     return (
-        <div className="relative overflow-hidden">
-            {/* Background orbs */}
-            <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-violet-900/15 blur-[150px] pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-cyan-900/15 blur-[150px] pointer-events-none" />
-
+        <div className="min-h-screen">
             {/* Hero */}
-            <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-24 text-center">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400 mb-8 backdrop-blur-sm">
-                    <Sparkles className="w-3.5 h-3.5 text-violet-400" />
-                    AI-Powered Resume Platform
+            <section className="relative py-24 sm:py-32 px-4 sm:px-6">
+                <div className="max-w-4xl mx-auto text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-8">
+                        <Zap className="w-3.5 h-3.5" />
+                        AI-Powered Resume Builder
+                    </div>
+
+                    <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                        Build resumes that
+                        <br />
+                        <span className="text-accent">land interviews</span>
+                    </h1>
+
+                    <p className="mt-6 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                        Professional templates, AI content generation, ATS optimization,
+                        and powerful PDF tools — all in one place.
+                    </p>
+
+                    <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link to="/builder">
+                            <Button variant="primary" size="lg">
+                                Start Building <ArrowRight className="w-4 h-4" />
+                            </Button>
+                        </Link>
+                        <Link to="/about">
+                            <Button variant="outline" size="lg">
+                                Learn More
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
+            </section>
 
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1] max-w-4xl mx-auto">
-                    Build Resumes That{" "}
-                    <span className="text-violet-400">Get You Hired</span>
-                </h1>
-
-                <p className="mt-6 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                    Create stunning, ATS-optimized resumes with AI assistance. Choose from professional templates, get instant feedback, and export in PDF or DOCX.
-                </p>
-
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-                    <Link to="/register">
-                        <Button variant="primary" size="lg">
-                            Start Building Free <ArrowRight className="w-4 h-4" />
-                        </Button>
-                    </Link>
-                    <Link to="/builder">
-                        <Button variant="outline" size="lg">
-                            Try Builder <Zap className="w-4 h-4" />
-                        </Button>
-                    </Link>
-                </div>
-
-                {/* Stats */}
-                <div className="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
-                    {stats.map((s) => (
-                        <div key={s.label} className="text-center">
-                            <div className="text-3xl font-bold text-cyan-400">{s.value}</div>
-                            <div className="text-xs text-gray-500 mt-1">{s.label}</div>
+            {/* Stats */}
+            <section className="py-16 px-4 sm:px-6 border-y border-white/[0.06]">
+                <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+                    {stats.map((s, i) => (
+                        <div key={i} className="text-center">
+                            <p className="text-3xl font-extrabold text-accent">{s.value}</p>
+                            <p className="text-sm text-gray-500 mt-1">{s.label}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
             {/* Features */}
-            <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-24">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                        Everything You Need to <span className="text-violet-400">Stand Out</span>
-                    </h2>
-                    <p className="mt-4 text-gray-400 max-w-lg mx-auto">
-                        From AI-powered content generation to professional templates and PDF tools.
-                    </p>
-                </div>
+            <section className="py-24 px-4 sm:px-6">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-extrabold text-white">Everything you need</h2>
+                        <p className="text-gray-500 mt-3">Tools built for professionals who want to stand out.</p>
+                    </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {features.map((f) => (
-                        <Card key={f.title} className="p-6 group hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
-                            <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                                <f.icon className="w-5 h-5 text-white" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-white mb-2">{f.title}</h3>
-                            <p className="text-sm text-gray-400 leading-relaxed">{f.desc}</p>
-                        </Card>
-                    ))}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {features.map((f, i) => (
+                            <Card key={i} className="p-6 hover:border-accent/20 transition-colors">
+                                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
+                                    <f.icon className="w-5 h-5 text-accent" />
+                                </div>
+                                <h3 className="text-base font-bold text-white mb-2">{f.title}</h3>
+                                <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            {/* How it Works */}
-            <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-24">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                        How It <span className="text-cyan-400">Works</span>
-                    </h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {[
-                        { step: "01", title: "Fill Your Details", desc: "Enter your information in our guided multi-step builder. Or let AI generate it for you." },
-                        { step: "02", title: "Pick a Template", desc: "Choose from our professional templates. Preview in real-time as you type." },
-                        { step: "03", title: "Download & Apply", desc: "Export as high-quality PDF or DOCX. ATS-optimized and ready to send." },
-                    ].map((item) => (
-                        <div key={item.step} className="relative text-center">
-                            <div className="text-6xl font-black text-white/5 mb-4">{item.step}</div>
-                            <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
-                            <p className="text-sm text-gray-400">{item.desc}</p>
-                        </div>
-                    ))}
+            {/* How it works */}
+            <section className="py-24 px-4 sm:px-6 bg-[#141414]">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-extrabold text-white">Three steps to your resume</h2>
+                    </div>
+
+                    <div className="space-y-8">
+                        {[
+                            { step: "01", title: "Fill in your info", desc: "Add your basics, skills, experience, projects, and education in a guided form." },
+                            { step: "02", title: "Pick a template", desc: "Choose from 6 professional templates — from clean ATS-friendly to creative designs." },
+                            { step: "03", title: "Download & apply", desc: "Export as PDF or DOCX. Use AI to generate a cover letter tailored to each job." },
+                        ].map((s, i) => (
+                            <div key={i} className="flex gap-6 items-start">
+                                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent font-bold text-sm">
+                                    {s.step}
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-white mb-1">{s.title}</h3>
+                                    <p className="text-sm text-gray-500 leading-relaxed">{s.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
             {/* CTA */}
-            <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-24 text-center">
-                <Card glow className="p-10 sm:p-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                        Ready to Build Your Perfect Resume?
-                    </h2>
-                    <p className="text-gray-400 mb-8 max-w-lg mx-auto">
-                        Join thousands of professionals who got their dream jobs with Docura.
-                    </p>
+            <section className="py-24 px-4 sm:px-6">
+                <div className="max-w-3xl mx-auto text-center">
+                    <h2 className="text-3xl font-extrabold text-white mb-4">Ready to build your resume?</h2>
+                    <p className="text-gray-500 mb-8">Start for free. No credit card required.</p>
                     <Link to="/register">
                         <Button variant="primary" size="lg">
-                            Get Started — It's Free <Star className="w-4 h-4" />
+                            Get Started Free <ChevronRight className="w-4 h-4" />
                         </Button>
                     </Link>
-                </Card>
+                </div>
             </section>
         </div>
     );

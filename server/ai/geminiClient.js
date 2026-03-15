@@ -16,6 +16,7 @@ function getModel() {
         const key = ensureApiKey();
         genAI = new GoogleGenerativeAI(key);
         model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        console.log("[Gemini] Model initialized: gemini-2.0-flash");
     }
     return model;
 }
@@ -27,19 +28,30 @@ function getVisionModel() {
 }
 
 // Retry wrapper with exponential backoff for rate-limited requests
-async function generateWithRetry(prompt, maxRetries = 3) {
-    const m = getModel();
+async function generateWithRetry(prompt, maxRetries = 3, options = {}) {
+    const m = options.model || getModel();
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
-            const result = await m.generateContent(prompt);
-            return result.response.text();
+            console.log(`[Gemini] Sending request (attempt ${attempt + 1}/${maxRetries + 1}), prompt length: ${typeof prompt === "string" ? prompt.length : "multipart"} chars`);
+
+            let result;
+            if (Array.isArray(prompt)) {
+                // Multipart content (text + image)
+                result = await m.generateContent(prompt);
+            } else {
+                result = await m.generateContent(prompt);
+            }
+
+            const text = result.response.text();
+            console.log(`[Gemini] Response received, length: ${text.length} chars`);
+            console.log(`[Gemini] Response preview: ${text.substring(0, 200)}...`);
+            return text;
         } catch (err) {
             const isRateLimit = err.status === 429 || err.message?.includes("429");
             const isLastAttempt = attempt === maxRetries;
 
             if (isRateLimit && !isLastAttempt) {
-                // Parse retry delay from error or use exponential backoff
                 let waitMs = Math.min(2000 * Math.pow(2, attempt), 60000);
 
                 const retryMatch = err.message?.match(/retry in (\d+(?:\.\d+)?)s/i);
@@ -54,6 +66,8 @@ async function generateWithRetry(prompt, maxRetries = 3) {
                 model = null;
                 continue;
             }
+
+            console.error(`[Gemini] Error: ${err.message} (status: ${err.status || "unknown"})`);
 
             // Better error messages for common errors
             if (isRateLimit) {
@@ -75,5 +89,17 @@ async function generateWithRetry(prompt, maxRetries = 3) {
         }
     }
 }
+
+// Log API key status on load
+(function checkApiKeyOnLoad() {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) {
+        console.warn("[Gemini] ⚠ GEMINI_API_KEY is NOT set in .env");
+    } else if (key === "your-gemini-api-key-here") {
+        console.warn("[Gemini] ⚠ GEMINI_API_KEY is still the placeholder value");
+    } else {
+        console.log(`[Gemini] ✓ GEMINI_API_KEY is set (${key.substring(0, 6)}...${key.substring(key.length - 4)})`);
+    }
+})();
 
 module.exports = { getModel, getVisionModel, generateWithRetry };

@@ -1,11 +1,10 @@
 import { cn } from "../../lib/utils";
 
-export function Card({ className, children, glow = false, ...props }) {
+export function Card({ className, children, ...props }) {
     return (
         <div
             className={cn(
-                "relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl",
-                glow && "border-violet-500/20 shadow-violet-500/5",
+                "bg-[#1A1A1A] border border-white/[0.08] rounded-2xl",
                 className
             )}
             {...props}

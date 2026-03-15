@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const crypto = require("crypto");
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,10 @@ async function listResumes(req, res) {
                 title: true,
                 templateId: true,
                 isDraft: true,
+                version: true,
+                parentId: true,
+                downloadCount: true,
+                publicSlug: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -93,6 +98,115 @@ async function deleteResume(req, res) {
     }
 }
 
+async function duplicateResume(req, res) {
+    try {
+        const original = await prisma.resume.findFirst({
+            where: { id: req.params.id, userId: req.user.id },
+        });
+        if (!original) return res.status(404).json({ error: "Resume not found." });
+
+        // Find the highest version for this resume chain
+        const maxVersion = await prisma.resume.aggregate({
+            where: {
+                userId: req.user.id,
+                OR: [
+                    { id: original.id },
+                    { parentId: original.parentId || original.id },
+                ],
+            },
+            _max: { version: true },
+        });
+
+        const newVersion = (maxVersion._max.version || 1) + 1;
+
+        const duplicate = await prisma.resume.create({
+            data: {
+                userId: req.user.id,
+                title: `${original.title} (v${newVersion})`,
+                data: original.data,
+                templateId: original.templateId,
+                isDraft: true,
+                version: newVersion,
+                parentId: original.parentId || original.id,
+            },
+        });
+
+        return res.status(201).json(duplicate);
+    } catch (err) {
+        console.error("Duplicate resume error:", err);
+        return res.status(500).json({ error: "Failed to duplicate resume." });
+    }
+}
+
+async function togglePublicLink(req, res) {
+    try {
+        const existing = await prisma.resume.findFirst({
+            where: { id: req.params.id, userId: req.user.id },
+        });
+        if (!existing) return res.status(404).json({ error: "Resume not found." });
+
+        let publicSlug = existing.publicSlug;
+
+        if (publicSlug) {
+            // Disable public link
+            await prisma.resume.update({
+                where: { id: req.params.id },
+                data: { publicSlug: null },
+            });
+            return res.json({ publicSlug: null, message: "Public link disabled." });
+        } else {
+            // Generate a short random slug
+            publicSlug = crypto.randomBytes(6).toString("hex");
+            await prisma.resume.update({
+                where: { id: req.params.id },
+                data: { publicSlug },
+            });
+            return res.json({ publicSlug, message: "Public link enabled." });
+        }
+    } catch (err) {
+        console.error("Toggle public link error:", err);
+        return res.status(500).json({ error: "Failed to toggle public link." });
+    }
+}
+
+async function getPublicResume(req, res) {
+    try {
+        const resume = await prisma.resume.findFirst({
+            where: { publicSlug: req.params.slug },
+            select: {
+                id: true,
+                title: true,
+                data: true,
+                templateId: true,
+                user: { select: { name: true } },
+            },
+        });
+        if (!resume) return res.status(404).json({ error: "Resume not found." });
+        return res.json(resume);
+    } catch (err) {
+        console.error("Get public resume error:", err);
+        return res.status(500).json({ error: "Failed to get resume." });
+    }
+}
+
+async function incrementDownload(req, res) {
+    try {
+        const resume = await prisma.resume.findFirst({
+            where: { id: req.params.id, userId: req.user.id },
+        });
+        if (!resume) return res.status(404).json({ error: "Resume not found." });
+
+        await prisma.resume.update({
+            where: { id: req.params.id },
+            data: { downloadCount: { increment: 1 } },
+        });
+        return res.json({ message: "Download tracked." });
+    } catch (err) {
+        console.error("Track download error:", err);
+        return res.status(500).json({ error: "Failed to track download." });
+    }
+}
+
 async function getUsageStats(req, res) {
     try {
         let usage = await prisma.usage.findUnique({
@@ -106,11 +220,17 @@ async function getUsageStats(req, res) {
             where: { userId: req.user.id },
         });
 
+        const totalDownloads = await prisma.resume.aggregate({
+            where: { userId: req.user.id },
+            _sum: { downloadCount: true },
+        });
+
         return res.json({
             plan: req.user.plan,
             aiGenerations: usage.aiGenerations,
             downloads: usage.downloads,
             resumeCount,
+            totalDownloads: totalDownloads._sum.downloadCount || 0,
             limits: req.user.plan === "pro"
                 ? { ai: "unlimited", downloads: "unlimited" }
                 : { ai: 5, downloads: 2 },
@@ -141,4 +261,16 @@ async function getAiHistory(req, res) {
     }
 }
 
-module.exports = { listResumes, getResume, createResume, updateResume, deleteResume, getUsageStats, getAiHistory };
+module.exports = {
+    listResumes,
+    getResume,
+    createResume,
+    updateResume,
+    deleteResume,
+    duplicateResume,
+    togglePublicLink,
+    getPublicResume,
+    incrementDownload,
+    getUsageStats,
+    getAiHistory,
+};

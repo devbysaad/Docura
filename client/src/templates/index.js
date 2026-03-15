@@ -2,6 +2,8 @@ import ModernMinimal from "./ModernMinimal";
 import ProfessionalCorporate from "./ProfessionalCorporate";
 import DeveloperPortfolio from "./DeveloperPortfolio";
 import CreativeDesigner from "./CreativeDesigner";
+import ExecutiveProfessional from "./ExecutiveProfessional";
+import ATSFriendly from "./ATSFriendly";
 
 export const templates = [
     {
@@ -35,6 +37,22 @@ export const templates = [
         component: CreativeDesigner,
         color: "from-violet-500 to-pink-500",
         preview: "bg-violet-50",
+    },
+    {
+        id: "executive-professional",
+        name: "Executive Professional",
+        description: "Traditional serif layout for senior roles",
+        component: ExecutiveProfessional,
+        color: "from-amber-600 to-amber-800",
+        preview: "bg-white",
+    },
+    {
+        id: "ats-friendly",
+        name: "ATS Friendly",
+        description: "Plain, parser-optimized layout for applicant tracking systems",
+        component: ATSFriendly,
+        color: "from-gray-600 to-gray-700",
+        preview: "bg-white",
     },
 ];
 

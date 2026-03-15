@@ -1,21 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-bg: #0a0a0f;
-  --color-surface: #12121a;
-  --color-violet: #a78bfa;
-  --color-cyan: #22d3ee;
+  --color-bg: #0F0F0F;
+  --color-surface: #1A1A1A;
+  --color-accent: #E8C547;
+  --color-accent-hover: #d4b33e;
   --color-text: #e5e7eb;
   --color-muted: #6b7280;
+  --color-border: rgba(255, 255, 255, 0.08);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(167, 139, 250, 0.3) transparent;
+  scrollbar-color: rgba(232, 197, 71, 0.2) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -27,7 +28,7 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(167, 139, 250, 0.25);
+  background: rgba(232, 197, 71, 0.2);
   border-radius: 9999px;
 }
 
@@ -40,7 +41,7 @@ body {
 }
 
 ::selection {
-  background-color: rgba(167, 139, 250, 0.3);
+  background-color: rgba(232, 197, 71, 0.25);
   color: #fff;
 }
 

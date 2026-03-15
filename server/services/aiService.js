@@ -1,11 +1,27 @@
-const { getModel, getVisionModel, generateWithRetry } = require("../ai/geminiClient");
+const { getVisionModel, generateWithRetry } = require("../ai/geminiClient");
 const { PrismaClient } = require("@prisma/client");
 const fs = require("fs");
 
 const prisma = new PrismaClient();
 
-async function generateResumeContent(description, userId) {
-  const prompt = `You are a professional resume writer. Based on the following job description/profile, generate resume content in JSON format.
+/**
+ * Safely parse JSON from AI response, stripping markdown fences.
+ */
+function safeJsonParse(text, context) {
+    const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    try {
+        return JSON.parse(cleaned);
+    } catch (err) {
+        console.error(`[AI] JSON parse failed (${context}). Raw text:\n${cleaned.substring(0, 500)}`);
+        throw new Error(`AI returned invalid JSON. Raw response preview: "${cleaned.substring(0, 200)}..."`);
+    }
+}
+
+async function generateResumeContent(description, userId, tone = "formal") {
+    const toneInstruction = getToneInstruction(tone);
+
+    const prompt = `You are a professional resume writer. Based on the following job description/profile, generate resume content in JSON format.
+${toneInstruction}
 
 Description: "${description}"
 
@@ -32,28 +48,27 @@ Return ONLY valid JSON with this exact structure:
 
 Make the content professional, ATS-friendly, and tailored to the description. Include realistic but generic company names. Return ONLY the JSON, no markdown formatting.`;
 
-  const text = await generateWithRetry(prompt);
+    console.log(`[AI] generateResumeContent called — desc length: ${description.length}, tone: ${tone}`);
+    const text = await generateWithRetry(prompt);
 
-  // Save to AI history
-  if (userId) {
-    await prisma.aiHistory.create({
-      data: { userId, type: "generate", prompt: description, response: text },
-    });
-  }
+    // Save to AI history
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "generate", prompt: description, response: text },
+        });
+    }
 
-  // Parse JSON from response
-  const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-  return JSON.parse(cleaned);
+    return safeJsonParse(text, "generateResumeContent");
 }
 
 async function chatWithAssistant(message, resumeData, conversationHistory, userId) {
-  const resumeContext = resumeData ? JSON.stringify(resumeData, null, 2) : "No resume data provided.";
+    const resumeContext = resumeData ? JSON.stringify(resumeData, null, 2) : "No resume data provided.";
 
-  const historyText = conversationHistory
-    ? conversationHistory.map(m => `${m.role}: ${m.content}`).join("\n")
-    : "";
+    const historyText = conversationHistory
+        ? conversationHistory.map(m => `${m.role}: ${m.content}`).join("\n")
+        : "";
 
-  const prompt = `You are Docura AI, a professional resume assistant. You help users improve their resumes.
+    const prompt = `You are Docura AI, a professional resume assistant. You help users improve their resumes.
 
 Current resume data:
 ${resumeContext}
@@ -63,19 +78,20 @@ User message: "${message}"
 
 Provide helpful, specific, and actionable advice. If the user asks to rewrite something, provide the improved version directly. If suggesting skills, be specific to their field. Keep responses concise but thorough. Use markdown formatting for readability.`;
 
-  const response = await generateWithRetry(prompt);
+    console.log(`[AI] chatWithAssistant called — message: "${message.substring(0, 80)}..."`);
+    const response = await generateWithRetry(prompt);
 
-  if (userId) {
-    await prisma.aiHistory.create({
-      data: { userId, type: "chat", prompt: message, response },
-    });
-  }
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "chat", prompt: message, response },
+        });
+    }
 
-  return response;
+    return response;
 }
 
 async function reviewResume(pdfText, jobDescription, userId) {
-  const prompt = `You are an expert ATS (Applicant Tracking System) resume reviewer. Analyze the following resume text and provide a detailed review.
+    const prompt = `You are an expert ATS (Applicant Tracking System) resume reviewer. Analyze the following resume text and provide a detailed review.
 
 Resume Text:
 """
@@ -114,26 +130,26 @@ Provide your analysis in the following JSON format ONLY (no markdown):
 
 Be honest, specific, and constructive. Score out of 10. Return ONLY the JSON.`;
 
-  const text = await generateWithRetry(prompt);
+    console.log(`[AI] reviewResume called — text length: ${pdfText.length}, has JD: ${!!jobDescription}`);
+    const text = await generateWithRetry(prompt);
 
-  if (userId) {
-    await prisma.aiHistory.create({
-      data: { userId, type: "review", prompt: pdfText.substring(0, 500), response: text },
-    });
-  }
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "review", prompt: pdfText.substring(0, 500), response: text },
+        });
+    }
 
-  const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-  return JSON.parse(cleaned);
+    return safeJsonParse(text, "reviewResume");
 }
 
 async function analyzeTemplateImage(imagePath, userId) {
-  const visionModel = getVisionModel();
+    const visionModel = getVisionModel();
 
-  const imageData = fs.readFileSync(imagePath);
-  const base64Image = imageData.toString("base64");
-  const mimeType = imagePath.endsWith(".png") ? "image/png" : "image/jpeg";
+    const imageData = fs.readFileSync(imagePath);
+    const base64Image = imageData.toString("base64");
+    const mimeType = imagePath.endsWith(".png") ? "image/png" : "image/jpeg";
 
-  const prompt = `Analyze this resume template image and recreate a similar HTML/CSS template. 
+    const prompt = `Analyze this resume template image and recreate a similar HTML/CSS template. 
 
 Return ONLY valid JSON with this structure:
 {
@@ -151,21 +167,228 @@ The HTML should:
 
 Return ONLY the JSON, no markdown.`;
 
-  const result = await visionModel.generateContent([
-    prompt,
-    { inlineData: { mimeType, data: base64Image } },
-  ]);
+    console.log(`[AI] analyzeTemplateImage called — image: ${imagePath}, mime: ${mimeType}`);
 
-  const text = result.response.text();
+    // Use generateWithRetry with custom model for retry/error handling
+    const text = await generateWithRetry(
+        [prompt, { inlineData: { mimeType, data: base64Image } }],
+        3,
+        { model: visionModel }
+    );
 
-  if (userId) {
-    await prisma.aiHistory.create({
-      data: { userId, type: "template", prompt: "Template from image", response: text },
-    });
-  }
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "template", prompt: "Template from image", response: text },
+        });
+    }
 
-  const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-  return JSON.parse(cleaned);
+    return safeJsonParse(text, "analyzeTemplateImage");
 }
 
-module.exports = { generateResumeContent, chatWithAssistant, reviewResume, analyzeTemplateImage };
+async function generateCoverLetter(resumeData, jobDescription, userId, tone = "formal") {
+    const toneInstruction = getToneInstruction(tone);
+
+    const prompt = `You are a professional cover letter writer. Based on the resume data and job description below, write a tailored cover letter.
+${toneInstruction}
+
+Resume Data:
+${JSON.stringify(resumeData, null, 2)}
+
+Job Description:
+"""
+${jobDescription}
+"""
+
+Write a compelling cover letter (3-4 paragraphs) that:
+- Opens with a strong hook mentioning the specific role
+- Highlights relevant experience and skills from the resume
+- Shows knowledge of the company/role from the job description
+- Closes with a confident call to action
+
+Return the cover letter as plain text (not JSON). Use professional formatting.`;
+
+    console.log(`[AI] generateCoverLetter called — tone: ${tone}`);
+    const text = await generateWithRetry(prompt);
+
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "generate", prompt: "Cover letter generation", response: text },
+        });
+    }
+
+    return text;
+}
+
+async function matchJobDescription(resumeData, jobDescription, userId) {
+    const prompt = `You are an expert career coach. Compare the following resume against the job description and identify gaps.
+
+Resume Data:
+${JSON.stringify(resumeData, null, 2)}
+
+Job Description:
+"""
+${jobDescription}
+"""
+
+Return ONLY valid JSON:
+{
+  "matchScore": 75,
+  "matchingSkills": ["skill1", "skill2"],
+  "missingSkills": ["skill3", "skill4"],
+  "missingKeywords": ["keyword1", "keyword2"],
+  "suggestions": [
+    "Add X to your skills section",
+    "Reword Y experience to highlight Z"
+  ],
+  "strongPoints": ["Your experience in X aligns well", "Your project Y is relevant"],
+  "summary": "Brief overall match assessment"
+}
+
+Be specific and actionable. Return ONLY the JSON.`;
+
+    console.log(`[AI] matchJobDescription called`);
+    const text = await generateWithRetry(prompt);
+
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "generate", prompt: "JD match", response: text },
+        });
+    }
+
+    return safeJsonParse(text, "matchJobDescription");
+}
+
+async function rewriteBulletPoint(original, tone = "formal", userId) {
+    const toneInstruction = getToneInstruction(tone);
+
+    const prompt = `You are a resume writing expert. Rewrite the following experience bullet point to be stronger and more impactful.
+${toneInstruction}
+
+Original: "${original}"
+
+Return ONLY valid JSON:
+{
+  "rewritten": "Improved bullet point starting with a strong action verb, including metrics where possible",
+  "alternatives": [
+    "Alternative version 1",
+    "Alternative version 2"
+  ]
+}
+
+Focus on: action verbs, quantifiable results, specific impact. Return ONLY the JSON.`;
+
+    console.log(`[AI] rewriteBulletPoint called — original: "${original.substring(0, 60)}..."`);
+    const text = await generateWithRetry(prompt);
+
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "generate", prompt: original, response: text },
+        });
+    }
+
+    return safeJsonParse(text, "rewriteBulletPoint");
+}
+
+async function generateSummary(resumeData, userId, tone = "formal") {
+    const toneInstruction = getToneInstruction(tone);
+
+    const prompt = `You are a professional resume writer. Based on the resume data below, generate a professional summary paragraph.
+${toneInstruction}
+
+Resume Data:
+${JSON.stringify(resumeData, null, 2)}
+
+Return ONLY valid JSON:
+{
+  "summary": "A compelling 3-4 sentence professional summary that highlights key strengths, experience level, and career focus",
+  "alternatives": [
+    "Alternative summary version 1",
+    "Alternative summary version 2"
+  ]
+}
+
+Make it ATS-friendly, specific, and compelling. Return ONLY the JSON.`;
+
+    console.log(`[AI] generateSummary called — tone: ${tone}`);
+    const text = await generateWithRetry(prompt);
+
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "generate", prompt: "Summary generation", response: text },
+        });
+    }
+
+    return safeJsonParse(text, "generateSummary");
+}
+
+async function atsCheck(resumeData, jobDescription, userId) {
+    const prompt = `You are an ATS (Applicant Tracking System) expert. Analyze this resume data for ATS compatibility.
+
+Resume Data:
+${JSON.stringify(resumeData, null, 2)}
+
+${jobDescription ? `Target Job Description:\n"""\n${jobDescription}\n"""` : ""}
+
+Return ONLY valid JSON:
+{
+  "score": 78,
+  "issues": [
+    {"severity": "high", "message": "Missing standard section: Education"},
+    {"severity": "medium", "message": "Skills section has fewer than 8 keywords"},
+    {"severity": "low", "message": "Consider adding a professional summary"}
+  ],
+  "keywordAnalysis": {
+    "found": ["keyword1", "keyword2"],
+    "missing": ["keyword3", "keyword4"],
+    "density": "adequate"
+  },
+  "formattingIssues": ["Issue 1", "Issue 2"],
+  "recommendations": ["Recommendation 1", "Recommendation 2"],
+  "sectionCompleteness": {
+    "basics": true,
+    "summary": false,
+    "skills": true,
+    "experience": true,
+    "education": false,
+    "projects": true
+  }
+}
+
+Be thorough and specific. Return ONLY the JSON.`;
+
+    console.log(`[AI] atsCheck called`);
+    const text = await generateWithRetry(prompt);
+
+    if (userId) {
+        await prisma.aiHistory.create({
+            data: { userId, type: "review", prompt: "ATS check", response: text },
+        });
+    }
+
+    return safeJsonParse(text, "atsCheck");
+}
+
+/**
+ * Returns a tone instruction string for AI prompts.
+ */
+function getToneInstruction(tone) {
+    const tones = {
+        formal: "Write in a formal, professional tone.",
+        casual: "Write in a friendly, conversational but still professional tone.",
+        technical: "Write in a technical, precise tone with industry-specific terminology.",
+        executive: "Write in an authoritative, executive-level tone emphasizing leadership and strategic impact.",
+    };
+    return tones[tone] || tones.formal;
+}
+
+module.exports = {
+    generateResumeContent,
+    chatWithAssistant,
+    reviewResume,
+    analyzeTemplateImage,
+    generateCoverLetter,
+    matchJobDescription,
+    rewriteBulletPoint,
+    generateSummary,
+    atsCheck,
+};

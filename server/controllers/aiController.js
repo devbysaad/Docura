@@ -1,4 +1,14 @@
-const { generateResumeContent, chatWithAssistant, reviewResume, analyzeTemplateImage } = require("../services/aiService");
+const {
+    generateResumeContent,
+    chatWithAssistant,
+    reviewResume,
+    analyzeTemplateImage,
+    generateCoverLetter,
+    matchJobDescription,
+    rewriteBulletPoint,
+    generateSummary,
+    atsCheck,
+} = require("../services/aiService");
 const { incrementUsage } = require("../middleware/rateLimiter");
 const pdfParse = require("pdf-parse");
 const fs = require("fs");
@@ -15,17 +25,20 @@ function getAiErrorResponse(err) {
     if (msg.includes("not found") || err.status === 404) {
         return { status: 503, error: "AI model unavailable. Please try again later." };
     }
+    if (msg.includes("invalid JSON") || msg.includes("JSON parse")) {
+        return { status: 502, error: "AI returned an unexpected response. Please try again." };
+    }
     return { status: 500, error: "AI generation failed. " + msg };
 }
 
 async function generate(req, res) {
     try {
-        const { description } = req.body;
+        const { description, tone } = req.body;
         if (!description || description.trim().length < 5) {
             return res.status(400).json({ error: "Please provide a description (at least 5 characters)." });
         }
 
-        const result = await generateResumeContent(description, req.user?.id);
+        const result = await generateResumeContent(description, req.user?.id, tone);
         await incrementUsage(req.user.id, "ai");
 
         return res.json(result);
@@ -63,12 +76,12 @@ async function review(req, res) {
             return res.status(400).json({ error: "Please upload a PDF resume." });
         }
 
+        console.log(`[AI Review] File received: ${file.originalname}, size: ${file.size}, path: ${file.path || "memory"}`);
+
         let fileBuffer;
         if (file.buffer) {
-            // Memory storage
             fileBuffer = file.buffer;
         } else if (file.path) {
-            // Disk storage
             fileBuffer = fs.readFileSync(file.path);
         } else {
             return res.status(400).json({ error: "Could not read uploaded file." });
@@ -76,9 +89,9 @@ async function review(req, res) {
 
         let pdfText = "";
         try {
-            // pdf-parse v1.1.1 — pass options to suppress rendering test page
             const parsed = await pdfParse(fileBuffer, { max: 0 });
             pdfText = parsed.text || "";
+            console.log(`[AI Review] PDF parsed successfully, text length: ${pdfText.length}`);
         } catch (parseErr) {
             console.error("PDF parse error:", parseErr.message);
             return res.status(400).json({ error: "Could not parse the PDF. Make sure it's a valid PDF file (not scanned/image-only)." });
@@ -114,11 +127,17 @@ async function templateFromImage(req, res) {
             return res.status(400).json({ error: "Please upload an image of a resume template." });
         }
 
+        console.log(`[AI Template] File received: ${file.originalname}, size: ${file.size}, path: ${file.path}`);
+
+        if (!file.path) {
+            return res.status(400).json({ error: "File upload failed — no file path. Check multer config." });
+        }
+
         const result = await analyzeTemplateImage(file.path, req.user?.id);
         await incrementUsage(req.user.id, "ai");
 
         // Clean up
-        fs.unlinkSync(file.path);
+        try { fs.unlinkSync(file.path); } catch (_) { }
 
         return res.json(result);
     } catch (err) {
@@ -131,4 +150,104 @@ async function templateFromImage(req, res) {
     }
 }
 
-module.exports = { generate, chat, review, templateFromImage };
+async function coverLetter(req, res) {
+    try {
+        const { resumeData, jobDescription, tone } = req.body;
+        if (!resumeData || !jobDescription) {
+            return res.status(400).json({ error: "Resume data and job description are required." });
+        }
+
+        const result = await generateCoverLetter(resumeData, jobDescription, req.user?.id, tone);
+        await incrementUsage(req.user.id, "ai");
+
+        return res.json({ coverLetter: result });
+    } catch (err) {
+        console.error("Cover letter error:", err.message);
+        const { status, error } = getAiErrorResponse(err);
+        return res.status(status).json({ error });
+    }
+}
+
+async function matchJob(req, res) {
+    try {
+        const { resumeData, jobDescription } = req.body;
+        if (!resumeData || !jobDescription) {
+            return res.status(400).json({ error: "Resume data and job description are required." });
+        }
+
+        const result = await matchJobDescription(resumeData, jobDescription, req.user?.id);
+        await incrementUsage(req.user.id, "ai");
+
+        return res.json(result);
+    } catch (err) {
+        console.error("Match job error:", err.message);
+        const { status, error } = getAiErrorResponse(err);
+        return res.status(status).json({ error });
+    }
+}
+
+async function rewriteBullet(req, res) {
+    try {
+        const { text, tone } = req.body;
+        if (!text || text.trim().length < 5) {
+            return res.status(400).json({ error: "Please provide bullet point text (at least 5 characters)." });
+        }
+
+        const result = await rewriteBulletPoint(text, tone, req.user?.id);
+        await incrementUsage(req.user.id, "ai");
+
+        return res.json(result);
+    } catch (err) {
+        console.error("Rewrite bullet error:", err.message);
+        const { status, error } = getAiErrorResponse(err);
+        return res.status(status).json({ error });
+    }
+}
+
+async function genSummary(req, res) {
+    try {
+        const { resumeData, tone } = req.body;
+        if (!resumeData) {
+            return res.status(400).json({ error: "Resume data is required." });
+        }
+
+        const result = await generateSummary(resumeData, req.user?.id, tone);
+        await incrementUsage(req.user.id, "ai");
+
+        return res.json(result);
+    } catch (err) {
+        console.error("Generate summary error:", err.message);
+        const { status, error } = getAiErrorResponse(err);
+        return res.status(status).json({ error });
+    }
+}
+
+async function checkAts(req, res) {
+    try {
+        const { resumeData, jobDescription } = req.body;
+        if (!resumeData) {
+            return res.status(400).json({ error: "Resume data is required." });
+        }
+
+        const result = await atsCheck(resumeData, jobDescription, req.user?.id);
+        await incrementUsage(req.user.id, "ai");
+
+        return res.json(result);
+    } catch (err) {
+        console.error("ATS check error:", err.message);
+        const { status, error } = getAiErrorResponse(err);
+        return res.status(status).json({ error });
+    }
+}
+
+module.exports = {
+    generate,
+    chat,
+    review,
+    templateFromImage,
+    coverLetter,
+    matchJob,
+    rewriteBullet,
+    genSummary,
+    checkAts,
+};

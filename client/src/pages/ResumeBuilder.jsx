@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useResumeStore from "../store/resumeStore";
 import useAuthStore from "../store/authStore";
-import { getResumeById, createResume, updateResume } from "../api/dashboard";
+import { getResume, createResume, updateResume } from "../api/dashboard";
 import { generateResumePdf, generateResumeDocx } from "../api/resume";
 import StepIndicator from "../components/StepIndicator";
 import BasicInfoForm from "../components/BasicInfoForm";
@@ -10,29 +10,34 @@ import SkillsForm from "../components/SkillsForm";
 import ExperienceForm from "../components/ExperienceForm";
 import ProjectsForm from "../components/ProjectsForm";
 import EducationForm from "../components/EducationForm";
+import CustomSectionForm from "../components/CustomSectionForm";
 import ResumePreview from "../components/ResumePreview";
 import TemplateSelector from "../components/TemplateSelector";
 import AiChatPanel from "../components/AiChatPanel";
 import { Button } from "../components/ui/Button";
-import { MessageSquare, Save, Download, FileText } from "lucide-react";
+import { Card } from "../components/ui/Card";
+import { MessageSquare, Save, Download, FileText, ChevronUp, ChevronDown } from "lucide-react";
 import toast from "react-hot-toast";
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
+const STEP_LABELS = ["Basics", "Skills", "Experience", "Projects", "Education", "Custom"];
 
 export default function ResumeBuilder() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuthStore();
     const {
-        resumeData, currentStep, selectedTemplate,
+        resumeData, currentStep, selectedTemplate, sectionOrder,
         setBasics, setSkills, setExperience, setProjects, setEducation,
-        setStep, nextStep, prevStep, setTemplate, setResumeData, setCurrentResumeId
+        setStep, nextStep, prevStep, setTemplate, setResumeData, setCurrentResumeId,
+        moveSectionUp, moveSectionDown,
     } = useResumeStore();
 
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [chatOpen, setChatOpen] = useState(false);
+    const [showReorder, setShowReorder] = useState(false);
 
     // Load existing resume if editing
     useEffect(() => {
@@ -43,7 +48,7 @@ export default function ResumeBuilder() {
 
     async function loadResume(resumeId) {
         try {
-            const data = await getResumeById(resumeId);
+            const data = await getResume(resumeId);
             setResumeData(data.data);
             setTemplate(data.templateId);
             setCurrentResumeId(data.id);
@@ -117,23 +122,29 @@ export default function ResumeBuilder() {
             case 3: return <ExperienceForm data={resumeData.experience} onChange={setExperience} />;
             case 4: return <ProjectsForm data={resumeData.projects} onChange={setProjects} />;
             case 5: return <EducationForm data={resumeData.education} onChange={setEducation} />;
+            case 6: return <CustomSectionForm />;
             default: return null;
         }
     };
 
-    return (
-        <div className="min-h-screen relative overflow-hidden">
-            {/* Ambient orbs */}
-            <div className="absolute top-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full bg-violet-900/15 blur-[140px] pointer-events-none" />
-            <div className="absolute bottom-[-15%] right-[-8%] w-[500px] h-[500px] rounded-full bg-cyan-900/15 blur-[140px] pointer-events-none" />
+    const sectionLabels = {
+        basics: "Basic Info",
+        skills: "Skills",
+        experience: "Experience",
+        projects: "Projects",
+        education: "Education",
+        customSections: "Custom Sections",
+    };
 
+    return (
+        <div className="min-h-screen relative">
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8">
                 {/* Header */}
                 <header className="text-center mb-6">
-                    <h1 className="text-3xl font-extrabold tracking-tight text-white">
-                        Build Your <span className="text-violet-400">Resume</span>
+                    <h1 className="text-3xl font-bold text-white">
+                        Build Your Resume
                     </h1>
-                    <p className="mt-2 text-gray-400 text-sm">
+                    <p className="mt-2 text-gray-500 text-sm">
                         Fill in your information, pick a template, and download.
                     </p>
                 </header>
@@ -143,17 +154,55 @@ export default function ResumeBuilder() {
                     <TemplateSelector selected={selectedTemplate} onSelect={setTemplate} />
                 </div>
 
-                {/* Step indicator */}
-                <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} />
+                {/* Section reordering toggle */}
+                <div className="flex items-center justify-between mb-4">
+                    <StepIndicator currentStep={currentStep} totalSteps={TOTAL_STEPS} labels={STEP_LABELS} />
+                    <button
+                        onClick={() => setShowReorder(!showReorder)}
+                        className="text-xs text-gray-500 hover:text-white transition-colors px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20"
+                    >
+                        {showReorder ? "Hide" : "Reorder Sections"}
+                    </button>
+                </div>
+
+                {/* Section reorder panel */}
+                {showReorder && (
+                    <Card className="p-4 mb-4">
+                        <p className="text-xs text-gray-500 mb-3">Drag sections to change their order in the final resume:</p>
+                        <div className="space-y-1">
+                            {sectionOrder.map((section, i) => (
+                                <div key={section} className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg">
+                                    <span className="text-sm text-gray-300">{sectionLabels[section] || section}</span>
+                                    <div className="flex gap-1">
+                                        <button
+                                            onClick={() => moveSectionUp(i)}
+                                            disabled={i === 0}
+                                            className="p-1 text-gray-500 hover:text-white disabled:opacity-30 transition-colors"
+                                        >
+                                            <ChevronUp className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => moveSectionDown(i)}
+                                            disabled={i === sectionOrder.length - 1}
+                                            className="p-1 text-gray-500 hover:text-white disabled:opacity-30 transition-colors"
+                                        >
+                                            <ChevronDown className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </Card>
+                )}
 
                 {/* Main layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left: Form */}
-                    <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
+                    <Card className="p-6 sm:p-8">
                         {renderStep()}
 
                         {/* Navigation */}
-                        <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
+                        <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
                             <Button variant="outline" onClick={prevStep} disabled={currentStep === 1}>
                                 ← Back
                             </Button>
@@ -188,24 +237,28 @@ export default function ResumeBuilder() {
                                 {error}
                             </div>
                         )}
-                    </div>
+                    </Card>
 
-                    {/* Right: Preview */}
+                    {/* Right: Live Preview */}
                     <div className="hidden lg:block">
-                        <ResumePreview data={resumeData} templateId={selectedTemplate} />
+                        <Card className="h-[calc(100vh-200px)] sticky top-24 overflow-hidden">
+                            <ResumePreview />
+                        </Card>
                     </div>
                 </div>
 
                 {/* Mobile preview */}
                 <div className="lg:hidden mt-6">
                     <details className="group">
-                        <summary className="cursor-pointer text-sm text-gray-400 hover:text-violet-400 transition-colors text-center list-none">
-                            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                        <summary className="cursor-pointer text-sm text-gray-400 hover:text-white transition-colors text-center list-none">
+                            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
                                 Toggle Preview
                             </span>
                         </summary>
                         <div className="mt-4">
-                            <ResumePreview data={resumeData} templateId={selectedTemplate} />
+                            <Card className="overflow-hidden" style={{ height: "500px" }}>
+                                <ResumePreview />
+                            </Card>
                         </div>
                     </details>
                 </div>
@@ -214,7 +267,7 @@ export default function ResumeBuilder() {
                 {user && (
                     <button
                         onClick={() => setChatOpen(!chatOpen)}
-                        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-violet-600 text-white flex items-center justify-center shadow-2xl shadow-violet-500/30 hover:scale-105 transition-transform z-40"
+                        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-violet-600 text-white flex items-center justify-center shadow-2xl hover:scale-105 transition-transform z-40"
                     >
                         <MessageSquare className="w-6 h-6" />
                     </button>
